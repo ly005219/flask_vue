@@ -1,0 +1,53 @@
+###获取商品列表
+GET http://127.0.0.1:5000/products/?name=连衣裙
+
+###删除单个商品
+DELETE http://127.0.0.1:5000/product/24/
+
+### 上传图片
+POST http://127.0.0.1:5000/upload_img/
+Content-Type: multipart/form-data; boundary=myfile
+
+
+--myfile
+Content-Disposition: form-data; name="img"; filename="1p.png"
+Content-Type: image/png
+
+< ../1p.png
+--myfile--
+
+###商品的添加
+POST http://127.0.0.1:5000/products/
+Content-Type: application/json
+
+{
+    "name": "测试商品1",
+    "price": 199,
+    "number": 100,
+    "weight":10,
+    "content": "这是一件测试商品",
+    "cid_one": 1,
+    "cid_two": 17,
+    "cid_three": 65,
+    "pics":["img1.png","img2.png"],
+    "attrs_static": [
+        {"id": 1, "name": "品牌", "value": "soulkiss","_type": "static"},
+        {"id": 2, "name": "颜色", "value": "红色","_type": "static"}
+
+    ],
+    "attrs_dynamic": [
+        {"id": 22, "name": "颜色分类", "value": ["红色","白色"],"_type": "dynamic"},
+        {"id":21, "name": "尺码", "value": ["S","M","L","XL"],"_type": "dynamic"}
+    ]
+
+
+}
+
+###商品的更新
+PUT http://127.0.0.1:5000/product/23/
+Content-Type: application/json
+
+{
+    
+    "state": 0
+}

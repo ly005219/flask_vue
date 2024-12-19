@@ -1,0 +1,36 @@
+### 测试获取角色列表
+GET http://127.0.0.1:5000/roles/
+
+### 添加角色
+POST http://127.0.0.1:5000/roles/
+Content-Type: application/json
+
+{
+    "name": "super_admin",
+    "desc": "超级管理员"
+
+}
+
+### 删除角色
+DELETE http://127.0.0.1:5000/role/8/
+
+
+### 修改角色
+PUT http://127.0.0.1:5000/role/7/
+Content-Type: application/json
+
+{
+    "name": "asd",
+    "desc": "系员"
+}
+
+### 角色删除特定的菜单权限
+GET http://127.0.0.1:5000/role/1/2/
+
+### 角色添加特定的菜单权限
+POST http://127.0.0.1:5000/role/3/
+Content-Type: application/json
+
+{
+    "menu_id":"1,11,2,21,3"
+}

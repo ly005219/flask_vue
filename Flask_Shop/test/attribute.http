@@ -1,0 +1,37 @@
+### 增加分类属性
+POST http://127.0.0.1:5000/attributes/
+Content-Type: application/json
+
+{
+    "name": "颜色无value",
+    "_type": "dynamic",
+   
+    "category_id": 84
+}
+
+### 根据分类id获取属性列表
+GET http://127.0.0.1:5000/attributes/?category_id=84&_type=dynamic
+
+### 根据属性id获取属性详情
+GET http://127.0.0.1:5000/attribute/1/
+
+### 修改属性
+PUT http://127.0.0.1:5000/attribute/50/
+Content-Type: application/json
+
+{
+    "name": "嘿嘿"
+
+}
+
+### 删除属性
+DELETE http://127.0.0.1:5000/attribute/53/
+
+###修改静态属性
+PUT http://127.0.0.1:5000/static_attr/50/
+Content-Type: application/json
+
+{
+    "name": "嘻嘻",
+    "value": "红色,蓝色,绿色"
+}
