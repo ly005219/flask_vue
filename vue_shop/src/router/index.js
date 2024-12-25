@@ -79,7 +79,14 @@ const routes = [
         path:'/statistics_list/'
         ,name:'statistics_list',
         component: () => import('../views/StatisticsView.vue')
+      },
+      {
+        path: '/sku_manage/',
+        name: 'SKUManage',
+        component: () => import('../views/SKUView.vue'),
+        meta: { title: 'SKU管理' }
       }
+
       
 
 

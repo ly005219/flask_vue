@@ -108,7 +108,7 @@ class UserReigster(Resource):
 
 
 user_api.add_resource(UserReigster, '/register/')
-
+from datetime import datetime
 
 #登录功能
 @user_bp.route('/login/', methods=[ 'POST'])
@@ -128,6 +128,9 @@ def login():
             return {'status':400,'msg':'用户不存在'}
         else:
             if user.check_password(pwd):
+                            # 更新最后登录时间
+                user.last_login = datetime.now()
+                db.session.commit()
                 #生产token
                 token=generate_token({'id':user.id})
                 
@@ -245,3 +248,36 @@ def check_phone():
         return {'status':400,'msg':'手机号已存在'}
     else:
         return {'status':200,'msg':'手机号可用'}
+    
+@user_bp.route('/last_login/')
+def user_last_login():
+    # 获取查询参数中的用户名
+    username = request.args.get('username')
+    if not username:
+        return {'status': 400, 'msg': '缺少用户名参数'}
+    
+    try:
+        # 从数据库查询用户
+        user = models.User.query.filter_by(username=username).first()
+        if not user:
+            return {'status': 404, 'msg': '用户不存在'}
+            
+        # 获取最后登录时间
+        last_login = user.last_login
+        if last_login:
+            # 格式化时间为字符串
+            last_login_str = last_login.strftime('%Y-%m-%d %H:%M:%S')
+        else:
+            last_login_str = None
+            
+        return {
+            'status': 200,
+            'msg': 'success',
+            'data': {
+                'last_login': last_login_str
+            }
+        }
+        
+    except Exception as e:
+        print(f"获取登录时间错误: {str(e)}")
+        return {'status': 500, 'msg': '服务器内部错误'}

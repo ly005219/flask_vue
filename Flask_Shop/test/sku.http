@@ -1,0 +1,35 @@
+### 获取SKU列表
+GET http://127.0.0.1:5000/skus/
+
+### 获取指定商品的SKU列表
+GET http://127.0.0.1:5000/skus/?product_id=1
+
+### 添加SKU
+POST http://127.0.0.1:5000/skus/
+Content-Type: application/json
+
+{
+    "product_id": 1,
+    "specifications": {
+        "颜色": "红色",
+        "尺码": "M"
+    },
+    "price": 199.99,
+    "stock": 100
+}
+
+### 更新SKU
+PUT http://127.0.0.1:5000/sku/1/
+Content-Type: application/json
+
+{
+    "price": 299.99,
+    "stock": 50,
+    "status": 1
+}
+
+### 删除SKU
+DELETE http://127.0.0.1:5000/sku/1/
+
+### 导出SKU列表为PDF
+GET http://127.0.0.1:5000/skus/export/pdf/ 

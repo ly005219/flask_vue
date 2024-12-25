@@ -54,7 +54,7 @@ const get_menu_list = () => {
     //这里是获取菜单列表的接口
     api.get_menu_list().then(res => {
         console.log(res)
-        tableData.menulist = res.data.menus
+        tableData.menulist = res.data.data
 
     })
 

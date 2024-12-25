@@ -84,8 +84,9 @@ const submitForm = (formRef) => {
                     })
 
                     console.log(res)
-                    //记录登录的token值，会话存储
+                    //记录登录的token值和用户名，会话存储
                     sessionStorage.setItem('token', res.data.data.token)
+                    sessionStorage.setItem('username', user.username)
                     //本地存储
                     // localStorage.setItem('token', res.data.data.token)
 

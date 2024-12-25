@@ -1,6 +1,24 @@
-import axios from "../utils/requests.js"
+import axios from "axios"
 import base from "./base.js"
 
+// 配置axios默认值
+axios.defaults.withCredentials = true
+axios.defaults.headers.common['Content-Type'] = 'application/json'
+
+// 添加请求拦截器
+axios.interceptors.request.use(
+  config => {
+    // 添加token
+    const token = sessionStorage.getItem('token')
+    if (token) {
+      config.headers.token = token
+    }
+    return config
+  },
+  error => {
+    return Promise.reject(error)
+  }
+)
 
 const api = {
   /**
@@ -14,8 +32,15 @@ const api = {
 
    },
    get_menu(params) {
-    return axios.get(base.baseUrl + base.get_menu, params)
-
+    return axios({
+      method: 'get',
+      url: base.baseUrl + base.get_menu,
+      params: params,
+      headers: {
+        'Content-Type': 'application/json',
+        'token': sessionStorage.getItem('token')
+      }
+    })
    },
    get_user(params) {
     //  if(params.username){
@@ -61,7 +86,14 @@ const api = {
    },
 
    get_roles_list(params) {
-     return axios.get(base.baseUrl + base.get_roles_list, params)
+     return axios({
+        method: 'get',
+        url: base.baseUrl + base.get_roles_list,
+        headers: {
+            'Content-Type': 'application/json',
+            'token': sessionStorage.getItem('token')
+        }
+    })
    },
    del_role_menu(role_id, menu_id) {
      return axios.get(base.baseUrl + base.del_role_menu + role_id + "/" + menu_id + "/")
@@ -124,6 +156,39 @@ const api = {
    },
    get_category_statistics(){
      return axios.get(base.baseUrl + base.get_category_statistics)
+   },
+   // 获取用户信息
+   get_user_info() {
+     return axios.get(base.baseUrl + base.get_user_info)
+   },
+   getLastLogin(username) {
+     return axios.get(base.baseUrl + base.get_last_login + `?username=${username}`)
+   },
+   get_sku_list(params) {
+     return axios.get(base.baseUrl + base.get_sku_list, {
+       params: params,
+       headers: {
+         'Content-Type': 'application/json',
+         'token': sessionStorage.getItem('token')
+       }
+     })
+   },
+   add_sku(params) {
+     return axios({
+        method: 'post',
+        url: base.baseUrl + base.add_sku,
+        data: params,
+        headers: {
+            'Content-Type': 'application/json',
+            'token': sessionStorage.getItem('token')
+        }
+    })
+   },
+   update_sku(id, params) {
+     return axios.put(base.baseUrl + base.update_sku + id + "/", params)
+   },
+   delete_sku(id) {
+     return axios.delete(base.baseUrl + base.delete_sku + id + "/")
    }
    
 

@@ -4,7 +4,7 @@ Content-Type: application/json
 
 {
     "username": "baizhan",
-    "pwd": "12345674"
+    "pwd": "123456"
 }
 
 ### User Register ,电话和邮箱是唯一的
@@ -64,3 +64,6 @@ Content-Type: application/json
 {
     "email": "12@qq.com"
 }
+
+###测试上次登录时间
+GET http://127.0.0.1:5000/user/last_login/?username=baizhan

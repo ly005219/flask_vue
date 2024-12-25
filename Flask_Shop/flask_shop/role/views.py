@@ -11,12 +11,18 @@ class Roles(Resource):
     """
 
     def get(self):
+        """获取角色列表"""
         try:
-            roles=models.Role.query.all()#这个roles里面就可以获取到Role模型的所有数据和方法to_dict()
-            role_list=[role.to_dict() for role in roles]
-            return {'status':200,'msg':'角色列表获取成功','roles_data':role_list}
+            roles = models.Role.query.all()
+            role_list = [role.to_dict() for role in roles]
+            return {
+                'status': 200,
+                'msg': '角色列表获取成功',
+                'roles_data': role_list
+            }
         except Exception as e:
-            return {'status':500,'msg':'角色列表获取失败','error':str(e)}
+            print(f"获取角色列表错误: {str(e)}")
+            return {'status': 500, 'msg': '角色列表获取失败', 'error': str(e)}
     
     #添加角色
     def post(self):

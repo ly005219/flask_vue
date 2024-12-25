@@ -35,7 +35,14 @@ const base = {
     get_order_list:"/orders/", //获取订单列表
     get_express_list:"/expresses/", //获取快递列表
     get_category_statistics:"/statistics/", //获取商品分类统计数据
-
+    get_user_info: "/user/info/",  // 获取用户信息的接口
+    get_last_login: "/user/last_login/",  // 获取上次登录时间的接口
+    get_sku_list: "/skus/",
+    add_sku: "/skus/",
+    update_sku: "/sku/",
+    delete_sku: "/sku/",
+    export_sku_pdf: "/skus/export/pdf/",
+    export_sku_excel: "/skus/export/excel/",  // 修改导出接口
   }
 export default base
   
