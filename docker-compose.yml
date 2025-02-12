@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"
+    environment:
+      FLASK_APP: manager.py
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    ports:
+      - "8080:8080" 
+
+  db: 
+    image: mysql:5.7
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: flask_shop
+    ports:
+      - "3321:3306"
+    volumes:
+      - ./flask_shop.sql:/docker-entrypoint-initdb.d/flask_shop.sql
+    command: mysqld --character-set-server=utf8 --collation-server=utf8_unicode_ci
+
+    
+
+
+
+
+# 使用 Docker Compose
+# 构建和启动服务：   docker-compose up --build -d
+# 在项目根目录下运行以下命令：
+# 1. 构建镜像：   docker-compose build
+# 这将构建并启动所有定义的服务。
+# 2. 后台运行：   docker-compose up --build -d
+# 如果你希望在后台运行服务，可以使用：
+# 3. 停止服务：   docker-compose down
+# 要停止运行的服务，使用：
