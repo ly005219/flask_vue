@@ -1,0 +1,69 @@
+# User Login
+POST http://127.0.0.1:5000/user/login/
+Content-Type: application/json
+
+{
+    "username": "baizhan",
+    "pwd": "123456"
+}
+
+### User Register ,电话和邮箱是唯一的
+POST http://127.0.0.1:5000/user/register/
+Content-Type: application/json
+
+{
+    "username": "你好",
+    "pwd": "12345674",
+    "email": "129@qq.com",
+    "phone": "13654896560",
+    "nick_name": "艾瑞克",
+    "real_pwd": "12345674",
+    "role_id": 1
+}
+
+
+### test_login测试token
+GET http://127.0.0.1:5000/user/test_login/
+token:eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZXhwIjoxNzMwNjUzNzA1Ljg1NzYyNzl9.SV3kNodQTrAsHbrlDMfOEo5rMvL-gaDjxN_8XZYNKo8
+
+### 测试获取菜单
+GET http://127.0.0.1:5000/menu/menus/?type_=tree
+
+### 测试根据ID获取单个用户
+GET http://127.0.0.1:5000/user/user/1/
+
+### 测试获取用户列表
+
+GET http://127.0.0.1:5000/user/register/?username=baizhan
+
+
+### 测试修改用户信息
+PUT http://127.0.0.1:5000/user/user/1/
+Content-Type: application/json
+
+{
+  
+    "email": "321@123.com",
+    "phone": "15658475777",
+    "nick_name": "西施",
+    "role_id": 3
+
+}
+
+### 测试删除用户
+DELETE http://127.0.0.1:5000/user/user/8/
+
+### 测试修改密码
+GET http://127.0.0.1:5000/user/reset_pwd/1/
+
+
+###验证邮箱是否存在
+POST http://127.0.0.1:5000/user/check_email/
+Content-Type: application/json
+
+{
+    "email": "12@qq.com"
+}
+
+###测试上次登录时间
+GET http://127.0.0.1:5000/user/last_login/?username=baizhan

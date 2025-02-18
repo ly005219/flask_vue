@@ -1,0 +1,33 @@
+# 使用官方的 Node.js 镜像作为基础镜像
+FROM node:22.11.0
+
+# 设置工作目录为 /app
+WORKDIR /app
+
+# 将 package.json 和 yarn.lock 复制到工作目录中
+COPY vue_shop/package.json vue_shop/yarn.lock ./
+
+# 将当前目录的内容复制到工作目录中
+COPY vue_shop .
+
+# 安装项目的依赖
+RUN yarn install
+
+# 构建项目
+RUN yarn build
+
+# 暴露应用的端口（假设你的应用在 8080 端口运行）
+EXPOSE 8080
+
+# 启动应用
+CMD ["yarn", "serve"] 
+
+
+# 如何使用这个 Dockerfile：
+# 构建 Docker 镜像：
+# 在前端项目根目录下运行以下命令：   docker build -t vue_frontend -f Dockerfile.frontend .
+# 这将创建一个名为 vue_frontend 的 Docker 镜像。
+# 运行 Docker 容器：
+# 使用以下命令启动容器：   docker run -p 8080:8080 -d vue_frontend
+# 这将启动容器，并将本地主机的 8080 端口映射到容器的 8080 端口。
+# 访问 http://localhost:8080 即可看到前端应用的欢迎页面。

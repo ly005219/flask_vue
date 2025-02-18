@@ -1,0 +1,21 @@
+### 增加商品分类
+POST  http://127.0.0.1:5000/categories/
+Content-Type: application/json
+
+{
+    "name":"iPhone手机",
+    "level":3,
+    "parent_id":28
+    
+}
+
+### 获取商品分类列表
+GET http://127.0.0.1:5000/categories/?pnum=3&psize=2
+
+### 获取数据统计
+GET http://127.0.0.1:5000/statistics/
+
+###删除商品分类
+DELETE http://127.0.0.1:5000/category/157/
+
+
