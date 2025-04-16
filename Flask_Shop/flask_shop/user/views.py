@@ -7,7 +7,7 @@ import re
 import os
 from werkzeug.utils import secure_filename
 
-from flask_shop.utils.token import generate_token,login_required
+from flask_shop.utils.jwt_token import generate_token,login_required
 
 
 

@@ -44,5 +44,4 @@ def login_required(view_func):
              return view_func(*agrs,**kwagrs)
         else:
             return {'status': 401, 'msg': 'token过期或者无效'}
-    return verify_token_info
-    
+    return verify_token_info 
