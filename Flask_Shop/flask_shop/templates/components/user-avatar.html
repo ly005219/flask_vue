@@ -1,0 +1,40 @@
+<!-- 
+用户头像组件
+使用方法: 
+1. 在需要使用头像的模板中引入此组件
+2. 在页面中使用以下方式显示头像:
+   <div class="avatar-container avatar-md">
+     <img class="lazy-avatar" data-src="{{ avatar_url }}" alt="{{ username }}">
+   </div>
+-->
+
+{% macro user_avatar(avatar_url, username='用户', size='md') %}
+<div class="avatar-container avatar-{{ size }}">
+  <img class="lazy-avatar" data-src="{{ avatar_url }}" alt="{{ username }}">
+</div>
+{% endmacro %}
+
+<!-- 使用示例 -->
+{% macro user_profile_card(user) %}
+<div class="user-profile-card">
+  <div class="profile-header">
+    {{ user_avatar(user.avatar, user.username, 'lg') }}
+    <h3>{{ user.username }}</h3>
+    <p>{{ user.role_name or '普通用户' }}</p>
+  </div>
+  <div class="profile-body">
+    {% if user.email %}
+    <div class="profile-item">
+      <span class="label">邮箱:</span>
+      <span class="value">{{ user.email }}</span>
+    </div>
+    {% endif %}
+    {% if user.last_login %}
+    <div class="profile-item">
+      <span class="label">上次登录:</span>
+      <span class="value">{{ user.last_login }}</span>
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endmacro %} 

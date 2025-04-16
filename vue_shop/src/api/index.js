@@ -206,6 +206,69 @@ const api = {
          'token': sessionStorage.getItem('token')
        }
      })
+   },
+   
+   // 获取头像编辑器页面URL
+   get_avatar_editor_url() {
+     return base.baseUrl + base.avatar_editor
+   },
+   
+   // 高级头像处理API
+   process_avatar(imageData, options = {}) {
+     // 创建FormData对象
+     const formData = new FormData()
+     
+     // 如果传入的是File对象
+     if (imageData instanceof File) {
+       formData.append('image', imageData)
+     } 
+     // 如果传入的是Blob对象（如Canvas导出的数据）
+     else if (imageData instanceof Blob) {
+       formData.append('image', imageData, 'cropped-image.jpg')
+     }
+     // 如果是Base64图像数据
+     else if (typeof imageData === 'string' && imageData.startsWith('data:image')) {
+       // 将Base64转换为Blob
+       const byteString = atob(imageData.split(',')[1])
+       const mimeString = imageData.split(',')[0].split(':')[1].split(';')[0]
+       const ab = new ArrayBuffer(byteString.length)
+       const ia = new Uint8Array(ab)
+       for (let i = 0; i < byteString.length; i++) {
+         ia[i] = byteString.charCodeAt(i)
+       }
+       const blob = new Blob([ab], { type: mimeString })
+       formData.append('image', blob, 'cropped-image.jpg')
+     } else {
+       throw new Error('无效的图像数据格式')
+     }
+     
+     // 添加裁剪数据
+     if (options.cropData) {
+       formData.append('crop_data', JSON.stringify(options.cropData))
+     }
+     
+     // 添加其他选项
+     if (options.rotate) formData.append('rotate', options.rotate)
+     if (options.quality) formData.append('quality', options.quality)
+     if (options.format) formData.append('format', options.format)
+     if (options.size) formData.append('size', options.size)
+     if (options.filter) formData.append('filter', options.filter)
+     if (options.filterIntensity) formData.append('filter_intensity', options.filterIntensity)
+     if (options.targetKb) formData.append('target_kb', options.targetKb)
+     
+     // 是否为预览请求
+     if (options.preview) formData.append('preview', 'true')
+     
+     // 发送请求
+     return axios({
+       method: 'post',
+       url: base.baseUrl + base.process_avatar,
+       data: formData,
+       headers: {
+         'Content-Type': 'multipart/form-data',
+         'token': sessionStorage.getItem('token')
+       }
+     })
    }
 }
 

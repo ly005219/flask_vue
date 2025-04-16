@@ -1,0 +1,301 @@
+{% extends "base.html" %}
+{% from "components/user-avatar.html" import user_avatar %}
+
+{% block title %}高级头像编辑 - Flask Shop{% endblock %}
+
+{% block stylesheets %}
+<!-- Cropper.js CSS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css" integrity="sha512-4rVgpxaIfF4lZ8mEMKxorMzGX+vZxydWYkVCQT0CZ6+jdOfGrMHVXxCorMrKyXaKl8re5FXVfoKUjBGQLzbbcg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<link rel="stylesheet" href="{{ url_for('static', filename='css/avatar-editor.css') }}">
+<!-- Font Awesome 图标 -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+<style>
+  /* 裁剪区域样式 */
+  .cropper-container {
+    width: 100%;
+    max-width: 500px;
+    margin: 0 auto;
+    background-color: #f0f0f0;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  
+  .image-container {
+    width: 100%;
+    height: 400px;
+    background-color: #e0e0e0;
+    position: relative;
+  }
+  
+  .image-container .placeholder {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    color: #666;
+    font-size: 1.2rem;
+  }
+  
+  .image-container img {
+    display: block;
+    max-width: 100%;
+  }
+  
+  /* 头像预览区域 */
+  .preview-box {
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    overflow: hidden;
+    margin: 20px auto;
+    border: 1px solid #ddd;
+    background-color: #f5f5f5;
+  }
+  
+  .preview-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+  /* 图片信息区域 */
+  .image-info {
+    margin-top: 15px;
+    padding: 10px;
+    border-radius: 4px;
+    background-color: #f9f9f9;
+    border: 1px solid #eee;
+  }
+  
+  .info-item {
+    margin-bottom: 5px;
+    display: flex;
+  }
+  
+  .info-label {
+    width: 100px;
+    font-weight: 500;
+    color: #555;
+  }
+  
+  .info-value {
+    flex: 1;
+    color: #333;
+  }
+  
+  /* 控制区域 */
+  .control-panel {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 20px;
+    justify-content: center;
+  }
+  
+  .control-btn {
+    padding: 8px 15px;
+    border: none;
+    border-radius: 4px;
+    background-color: #f0f0f0;
+    color: #333;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+  }
+  
+  .control-btn i {
+    margin-right: 5px;
+  }
+  
+  .control-btn:hover {
+    background-color: #e0e0e0;
+  }
+  
+  /* 上传进度条 */
+  progress {
+    width: 100%;
+    height: 8px;
+    margin-top: 20px;
+    display: none;
+  }
+  
+  /* 加载状态 */
+  .loading {
+    opacity: 0.7;
+    pointer-events: none;
+  }
+  
+  /* 响应式调整 */
+  @media (max-width: 768px) {
+    .cropper-container {
+      max-width: 100%;
+    }
+    
+    .image-container {
+      height: 300px;
+    }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+  <h1 class="page-title">高级头像编辑</h1>
+  
+  <div id="avatar-editor" class="avatar-editor">
+    <!-- 文件选择区域 -->
+    <div class="file-select-area">
+      <input type="file" id="avatar-input" accept="image/*" style="display: none;">
+      <button type="button" class="btn btn-primary" onclick="document.getElementById('avatar-input').click();">
+        <i class="fas fa-image"></i> 选择图片
+      </button>
+      <p class="mt-2 text-muted">或将图片拖放到下方区域</p>
+    </div>
+    
+    <!-- 裁剪区域 -->
+    <div class="cropper-container mt-3">
+      <div id="image-container" class="image-container">
+        <div class="placeholder">请选择或拖放图片</div>
+      </div>
+    </div>
+    
+    <!-- 控制按钮 -->
+    <div class="control-panel editor-controls" style="display: none;">
+      <button type="button" id="zoom-in" class="control-btn">
+        <i class="fas fa-search-plus"></i> 放大
+      </button>
+      <button type="button" id="zoom-out" class="control-btn">
+        <i class="fas fa-search-minus"></i> 缩小
+      </button>
+      <button type="button" id="rotate-left" class="control-btn">
+        <i class="fas fa-undo"></i> 向左旋转
+      </button>
+      <button type="button" id="rotate-right" class="control-btn">
+        <i class="fas fa-redo"></i> 向右旋转
+      </button>
+    </div>
+    
+    <!-- 预览区域 -->
+    <div class="preview-box-container mt-4">
+      <h3 class="text-center">预览效果</h3>
+      <div class="preview-box">
+        <img id="crop-preview" src="" alt="预览">
+      </div>
+      <div id="image-info" class="image-info mt-2"></div>
+    </div>
+    
+    <!-- 编辑控制区域 -->
+    <div class="editor-controls mt-4" style="display: none;">
+      <!-- 质量控制 -->
+      <div class="control-group">
+        <label for="quality-slider" class="control-label">质量</label>
+        <div class="slider-control">
+          <input type="range" id="quality-slider" min="10" max="100" value="85" step="5">
+          <span id="quality-value" class="slider-value">85%</span>
+        </div>
+      </div>
+      
+      <!-- 格式选择 -->
+      <div class="control-group">
+        <label class="control-label">输出格式</label>
+        <div class="radio-group">
+          <div class="radio-button">
+            <input type="radio" id="format-jpeg" name="format" value="JPEG" checked>
+            <label for="format-jpeg">JPEG</label>
+          </div>
+          <div class="radio-button">
+            <input type="radio" id="format-png" name="format" value="PNG">
+            <label for="format-png">PNG</label>
+          </div>
+          <div class="radio-button">
+            <input type="radio" id="format-webp" name="format" value="WEBP">
+            <label for="format-webp">WebP</label>
+          </div>
+        </div>
+      </div>
+      
+      <!-- 滤镜选择 -->
+      <div class="control-group">
+        <label class="control-label">滤镜效果</label>
+        <div class="radio-group">
+          <div class="radio-button">
+            <input type="radio" id="filter-none" name="filter" value="none" checked>
+            <label for="filter-none">无</label>
+          </div>
+          <div class="radio-button">
+            <input type="radio" id="filter-sepia" name="filter" value="sepia">
+            <label for="filter-sepia">复古</label>
+          </div>
+          <div class="radio-button">
+            <input type="radio" id="filter-bw" name="filter" value="bw">
+            <label for="filter-bw">黑白</label>
+          </div>
+          <div class="radio-button">
+            <input type="radio" id="filter-brightness" name="filter" value="brightness">
+            <label for="filter-brightness">明亮</label>
+          </div>
+          <div class="radio-button">
+            <input type="radio" id="filter-contrast" name="filter" value="contrast">
+            <label for="filter-contrast">对比度</label>
+          </div>
+          <div class="radio-button">
+            <input type="radio" id="filter-sharpen" name="filter" value="sharpen">
+            <label for="filter-sharpen">锐化</label>
+          </div>
+        </div>
+      </div>
+      
+      <!-- 滤镜强度 -->
+      <div class="control-group" id="filter-intensity-controls" style="display: none;">
+        <label for="filter-intensity" class="control-label">滤镜强度</label>
+        <div class="slider-control">
+          <input type="range" id="filter-intensity" min="0" max="1" value="0.5" step="0.1">
+          <span id="filter-intensity-value" class="slider-value">50%</span>
+        </div>
+      </div>
+    </div>
+    
+    <!-- 上传进度 -->
+    <progress id="upload-progress" value="0" max="100"></progress>
+    <div id="status-message" class="status-message mt-3" style="display: none;"></div>
+    
+    <!-- 操作按钮 -->
+    <div class="editor-actions mt-4">
+      <button type="button" id="reset-button" class="btn btn-secondary">重置</button>
+      <button type="button" id="upload-button" class="btn btn-primary" disabled>上传头像</button>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<!-- Cropper.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js" integrity="sha512-6lplKUSl86rUVprDIjiKKsXLY+hyLpDmHt3EU3UF5gzkuFbh7FKGtUgGNrYZQEGKZfuTAQg0IALDbXPnYp4QZA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<!-- 头像裁剪JS -->
+<script src="{{ url_for('static', filename='js/avatar-cropper.js') }}"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    // 初始化头像裁剪器
+    window.avatarCropper = new AvatarCropper({
+      apiEndpoint: '{{ url_for("user.process_avatar") }}',
+      aspectRatio: 1, // 1:1 圆形裁剪
+      previewWidth: 200,
+      previewHeight: 200,
+      autoApplyFilter: true
+    });
+    
+    // 显示/隐藏滤镜强度控制
+    document.querySelectorAll('input[name="filter"]').forEach(input => {
+      input.addEventListener('change', () => {
+        const filterControls = document.getElementById('filter-intensity-controls');
+        if (filterControls) {
+          filterControls.style.display = input.value !== 'none' ? 'block' : 'none';
+        }
+      });
+    });
+  });
+</script>
+{% endblock %} 

@@ -874,6 +874,105 @@
     "@babel/helper-string-parser" "^7.25.9"
     "@babel/helper-validator-identifier" "^7.25.9"
 
+"@cropper/element-canvas@^2.0.0":
+  version "2.0.0"
+  resolved "https://registry.npmmirror.com/@cropper/element-canvas/-/element-canvas-2.0.0.tgz"
+  integrity sha512-GPtGJgSm92crJhhhwUsaMw3rz2KfJWWSz7kRAlufFEV/EHTP5+6r6/Z1BCGRna830i+Avqbm435XLOtA7PVJwA==
+  dependencies:
+    "@cropper/element" "^2.0.0"
+    "@cropper/utils" "^2.0.0"
+
+"@cropper/element-crosshair@^2.0.0":
+  version "2.0.0"
+  resolved "https://registry.npmmirror.com/@cropper/element-crosshair/-/element-crosshair-2.0.0.tgz"
+  integrity sha512-KfPfyrdeFvUC31Ws7ATtcalWWSaMtrC6bMoCipZhqbUOE7wZoL4ecDSL6BUOZxPa74awZUqfzirCDjHvheBfyw==
+  dependencies:
+    "@cropper/element" "^2.0.0"
+    "@cropper/utils" "^2.0.0"
+
+"@cropper/element-grid@^2.0.0":
+  version "2.0.0"
+  resolved "https://registry.npmmirror.com/@cropper/element-grid/-/element-grid-2.0.0.tgz"
+  integrity sha512-i78SQ0IJTLFveKX6P7svkfMYVdgHrQ8ZmmEw8keFy9n1ZVbK+SK0UHK5FNMRNI/gtVhKJOGEnK/zeyjUdj4Iyw==
+  dependencies:
+    "@cropper/element" "^2.0.0"
+    "@cropper/utils" "^2.0.0"
+
+"@cropper/element-handle@^2.0.0":
+  version "2.0.0"
+  resolved "https://registry.npmmirror.com/@cropper/element-handle/-/element-handle-2.0.0.tgz"
+  integrity sha512-ZJvW+0MkK9E8xYymGdoruaQn2kwjSHFpNSWinjyq6csuVQiCPxlX5ovAEDldmZ9MWePPtWEi3vLKQOo2Yb0T8g==
+  dependencies:
+    "@cropper/element" "^2.0.0"
+    "@cropper/utils" "^2.0.0"
+
+"@cropper/element-image@^2.0.0":
+  version "2.0.0"
+  resolved "https://registry.npmmirror.com/@cropper/element-image/-/element-image-2.0.0.tgz"
+  integrity sha512-9BxiTS/aHRmrjopaFQb9mQQXmx4ruhYHGkDZMVz24AXpMFjUY6OpqrWse/WjzD9tfhMFvEdu17b3VAekcAgpeg==
+  dependencies:
+    "@cropper/element" "^2.0.0"
+    "@cropper/element-canvas" "^2.0.0"
+    "@cropper/utils" "^2.0.0"
+
+"@cropper/element-selection@^2.0.0":
+  version "2.0.0"
+  resolved "https://registry.npmmirror.com/@cropper/element-selection/-/element-selection-2.0.0.tgz"
+  integrity sha512-ensNnbIfJsJ8bhbJTH/RXtk2URFvTOO4TvfRk461n2FPEC588D7rwBmUJxQg74IiTi4y1JbCI+6j+4LyzYBLCQ==
+  dependencies:
+    "@cropper/element" "^2.0.0"
+    "@cropper/element-canvas" "^2.0.0"
+    "@cropper/element-image" "^2.0.0"
+    "@cropper/utils" "^2.0.0"
+
+"@cropper/element-shade@^2.0.0":
+  version "2.0.0"
+  resolved "https://registry.npmmirror.com/@cropper/element-shade/-/element-shade-2.0.0.tgz"
+  integrity sha512-jv/2bbNZnhU4W+T4G0c8ADocLIZvQFTXgCf2RFDNhI5UVxurzWBnDdb8Mx8LnVplnkTqO+xUmHZYve0CwgWo+Q==
+  dependencies:
+    "@cropper/element" "^2.0.0"
+    "@cropper/element-canvas" "^2.0.0"
+    "@cropper/element-selection" "^2.0.0"
+    "@cropper/utils" "^2.0.0"
+
+"@cropper/element-viewer@^2.0.0":
+  version "2.0.0"
+  resolved "https://registry.npmmirror.com/@cropper/element-viewer/-/element-viewer-2.0.0.tgz"
+  integrity sha512-zY+3VRN5TvpM8twlphYtXw0tzJL2VgzeK7ufhL1BixVqOdRxwP13TprYIhqwGt9EW/SyJZUiaIu396T89kRX8A==
+  dependencies:
+    "@cropper/element" "^2.0.0"
+    "@cropper/element-canvas" "^2.0.0"
+    "@cropper/element-image" "^2.0.0"
+    "@cropper/element-selection" "^2.0.0"
+    "@cropper/utils" "^2.0.0"
+
+"@cropper/element@^2.0.0":
+  version "2.0.0"
+  resolved "https://registry.npmmirror.com/@cropper/element/-/element-2.0.0.tgz"
+  integrity sha512-lsthn0nQq73GExUE7Mg/ss6Q3RXADGDv055hxoLFwvl/wGHgy6ZkYlfLZ/VmgBHC6jDK5IgPBFnqrPqlXWSGBA==
+  dependencies:
+    "@cropper/utils" "^2.0.0"
+
+"@cropper/elements@^2.0.0":
+  version "2.0.0"
+  resolved "https://registry.npmmirror.com/@cropper/elements/-/elements-2.0.0.tgz"
+  integrity sha512-PQkPo1nUjxLFUQuHYu+6atfHxpX9B41Xribao6wpvmvmNIFML6LQdNqqWYb6LyM7ujsu71CZdBiMT5oetjJVoQ==
+  dependencies:
+    "@cropper/element" "^2.0.0"
+    "@cropper/element-canvas" "^2.0.0"
+    "@cropper/element-crosshair" "^2.0.0"
+    "@cropper/element-grid" "^2.0.0"
+    "@cropper/element-handle" "^2.0.0"
+    "@cropper/element-image" "^2.0.0"
+    "@cropper/element-selection" "^2.0.0"
+    "@cropper/element-shade" "^2.0.0"
+    "@cropper/element-viewer" "^2.0.0"
+
+"@cropper/utils@^2.0.0":
+  version "2.0.0"
+  resolved "https://registry.npmmirror.com/@cropper/utils/-/utils-2.0.0.tgz"
+  integrity sha512-cprLYr+7kK3faGgoOsTW9gIn5sefDr2KwOmgyjzIXk+8PLpW8FgFKEg5FoWfRD5zMAmkCBuX6rGKDK3VdUEGrg==
+
 "@ctrl/tinycolor@^3.4.1":
   version "3.6.1"
   resolved "https://registry.npmmirror.com/@ctrl/tinycolor/-/tinycolor-3.6.1.tgz"
@@ -993,6 +1092,35 @@
   dependencies:
     "@nodelib/fs.scandir" "2.1.5"
     fastq "^1.6.0"
+
+"@parcel/watcher-win32-x64@2.5.1":
+  version "2.5.1"
+  resolved "https://registry.npmmirror.com/@parcel/watcher-win32-x64/-/watcher-win32-x64-2.5.1.tgz"
+  integrity sha512-9lHBdJITeNR++EvSQVUcaZoWupyHfXe1jZvGZ06O/5MflPcuPLtEphScIBL+AiCWBO46tDSHzWyD0uDmmZqsgA==
+
+"@parcel/watcher@^2.4.1":
+  version "2.5.1"
+  resolved "https://registry.npmmirror.com/@parcel/watcher/-/watcher-2.5.1.tgz"
+  integrity sha512-dfUnCxiN9H4ap84DvD2ubjw+3vUNpstxa0TneY/Paat8a3R4uQZDLSvWjmznAY/DoahqTHl9V46HF/Zs3F29pg==
+  dependencies:
+    detect-libc "^1.0.3"
+    is-glob "^4.0.3"
+    micromatch "^4.0.5"
+    node-addon-api "^7.0.0"
+  optionalDependencies:
+    "@parcel/watcher-android-arm64" "2.5.1"
+    "@parcel/watcher-darwin-arm64" "2.5.1"
+    "@parcel/watcher-darwin-x64" "2.5.1"
+    "@parcel/watcher-freebsd-x64" "2.5.1"
+    "@parcel/watcher-linux-arm-glibc" "2.5.1"
+    "@parcel/watcher-linux-arm-musl" "2.5.1"
+    "@parcel/watcher-linux-arm64-glibc" "2.5.1"
+    "@parcel/watcher-linux-arm64-musl" "2.5.1"
+    "@parcel/watcher-linux-x64-glibc" "2.5.1"
+    "@parcel/watcher-linux-x64-musl" "2.5.1"
+    "@parcel/watcher-win32-arm64" "2.5.1"
+    "@parcel/watcher-win32-ia32" "2.5.1"
+    "@parcel/watcher-win32-x64" "2.5.1"
 
 "@polka/url@^1.0.0-next.24":
   version "1.0.0-next.28"
@@ -2352,6 +2480,13 @@ chokidar@^3.5.3, chokidar@^3.6.0:
   optionalDependencies:
     fsevents "~2.3.2"
 
+chokidar@^4.0.0:
+  version "4.0.3"
+  resolved "https://registry.npmmirror.com/chokidar/-/chokidar-4.0.3.tgz"
+  integrity sha512-Qgzu8kfBvo+cA4962jnP1KkS6Dop5NS6g7R5LFYJr4b8Ub94PPQXUksCw9PvXoeXPRRddRNC5C1JQUR2SMGtnA==
+  dependencies:
+    readdirp "^4.0.1"
+
 chrome-trace-event@^1.0.2:
   version "1.0.4"
   resolved "https://registry.npmmirror.com/chrome-trace-event/-/chrome-trace-event-1.0.4.tgz"
@@ -2601,6 +2736,14 @@ cosmiconfig@^7.0.0:
     parse-json "^5.0.0"
     path-type "^4.0.0"
     yaml "^1.10.0"
+
+cropperjs@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.npmmirror.com/cropperjs/-/cropperjs-2.0.0.tgz"
+  integrity sha512-TO2j0Qre01kPHbow4FuTrbdEB4jTmGRySxW49jyEIqlJZuEBfrvCTT0vC3eRB2WBXudDfKi1Onako6DKWKxeAQ==
+  dependencies:
+    "@cropper/elements" "^2.0.0"
+    "@cropper/utils" "^2.0.0"
 
 cross-spawn@^6.0.0:
   version "6.0.5"
@@ -2872,6 +3015,11 @@ destroy@1.2.0:
   version "1.2.0"
   resolved "https://registry.npmmirror.com/destroy/-/destroy-1.2.0.tgz"
   integrity sha512-2sJGJTaXIIaR1w4iJSNoN0hnMY7Gpc/n8D4qSCJw8QqFWXf7cuAgnEHxBpweaVcPevC2l3KpjYCx3NypQQgaJg==
+
+detect-libc@^1.0.3:
+  version "1.0.3"
+  resolved "https://registry.npmmirror.com/detect-libc/-/detect-libc-1.0.3.tgz"
+  integrity sha512-pGjwhsmsp4kL2RTz08wcOlGN83otlqHeD/Z5T8GXZB+/YcpQ/dgo+lbU8ZsGxV0HIvqqxo9l7mqYwyYMD9bKDg==
 
 detect-node@^2.0.4:
   version "2.1.0"
@@ -3837,6 +3985,11 @@ ignore@^5.2.0:
   resolved "https://registry.npmmirror.com/ignore/-/ignore-5.3.2.tgz"
   integrity sha512-hsBTNUqQTDwkWtcdYI2i06Y/nUBEsNEDJKjWdigLvegy8kDuJAS8uRlpkkcQpyEXL0Z/pjDy5HBmMjRCJ2gq+g==
 
+immutable@^5.0.2:
+  version "5.1.1"
+  resolved "https://registry.npmmirror.com/immutable/-/immutable-5.1.1.tgz"
+  integrity sha512-3jatXi9ObIsPGr3N5hGw/vWWcTkq6hUYhpQz4k0wLC+owqWi/LiugIw9x0EdNZ2yGedKN/HzePiBvaJRXa0Ujg==
+
 import-fresh@^3.2.1:
   version "3.3.0"
   resolved "https://registry.npmmirror.com/import-fresh/-/import-fresh-3.3.0.tgz"
@@ -4486,7 +4639,7 @@ methods@~1.1.2:
   resolved "https://registry.npmmirror.com/methods/-/methods-1.1.2.tgz"
   integrity sha512-iclAHeNqNm68zFtnZ0e+1L2yUIdvzNoauKU4WBA3VvH/vPFieF7qfRlwUZU+DA9P9bPXIS90ulxoUoCH23sV2w==
 
-micromatch@^4.0.2, micromatch@^4.0.4:
+micromatch@^4.0.2, micromatch@^4.0.4, micromatch@^4.0.5:
   version "4.0.8"
   resolved "https://registry.npmmirror.com/micromatch/-/micromatch-4.0.8.tgz"
   integrity sha512-PXwfBhYu0hBCPw8Dn0E+WDYb7af3dSLVWKi3HGv84IdF4TyFoC0ysxFd0Goxw7nSv4T/PzEJQxsYsEiFCKo2BA==
@@ -4660,6 +4813,11 @@ no-case@^3.0.4:
   dependencies:
     lower-case "^2.0.2"
     tslib "^2.0.3"
+
+node-addon-api@^7.0.0:
+  version "7.1.1"
+  resolved "https://registry.npmmirror.com/node-addon-api/-/node-addon-api-7.1.1.tgz"
+  integrity sha512-5m3bsyrjFWE1xf7nz7YXdN4udnVtXK6/Yfgn5qnahL6bCkf2yKt4k3nuTKAtT4r3IG8JNR2ncsIMdZuAzJjHQQ==
 
 node-fetch@^2.6.7:
   version "2.7.0"
@@ -5400,6 +5558,11 @@ readable-stream@^3.0.6, readable-stream@^3.4.0:
     string_decoder "^1.1.1"
     util-deprecate "^1.0.1"
 
+readdirp@^4.0.1:
+  version "4.1.2"
+  resolved "https://registry.npmmirror.com/readdirp/-/readdirp-4.1.2.tgz"
+  integrity sha512-GDhwkLfywWL2s6vEjyhri+eXmfH6j1L7JE27WhqLeYzoh/A3DBaYGEj2H/HFZCn/kMfim73FXxEJTw06WtxQwg==
+
 readdirp@~3.6.0:
   version "3.6.0"
   resolved "https://registry.npmmirror.com/readdirp/-/readdirp-3.6.0.tgz"
@@ -5605,6 +5768,24 @@ safe-regex-test@^1.0.3:
   version "2.1.2"
   resolved "https://registry.npmmirror.com/safer-buffer/-/safer-buffer-2.1.2.tgz"
   integrity sha512-YZo3K82SD7Riyi0E1EQPojLz7kpepnSQI9IyPbHHg1XXXevb5dJI7tpyN2ADxGcQbHG7vcyRHk0cbwqcQriUtg==
+
+sass-loader@^16.0.5:
+  version "16.0.5"
+  resolved "https://registry.npmmirror.com/sass-loader/-/sass-loader-16.0.5.tgz"
+  integrity sha512-oL+CMBXrj6BZ/zOq4os+UECPL+bWqt6OAC6DWS8Ln8GZRcMDjlJ4JC3FBDuHJdYaFWIdKNIBYmtZtK2MaMkNIw==
+  dependencies:
+    neo-async "^2.6.2"
+
+sass@^1.3.0, sass@^1.86.3:
+  version "1.86.3"
+  resolved "https://registry.npmmirror.com/sass/-/sass-1.86.3.tgz"
+  integrity sha512-iGtg8kus4GrsGLRDLRBRHY9dNVA78ZaS7xr01cWnS7PEMQyFtTqBiyCrfpTYTZXRWM94akzckYjh8oADfFNTzw==
+  dependencies:
+    chokidar "^4.0.0"
+    immutable "^5.0.2"
+    source-map-js ">=0.6.2 <2.0.0"
+  optionalDependencies:
+    "@parcel/watcher" "^2.4.1"
 
 schema-utils@^2.6.5:
   version "2.7.1"
@@ -5867,7 +6048,7 @@ source-list-map@^2.0.0:
   resolved "https://registry.npmmirror.com/source-list-map/-/source-list-map-2.0.1.tgz"
   integrity sha512-qnQ7gVMxGNxsiL4lEuJwe/To8UnK7fAnmbGEEH8RpLouuKbeEm0lhbQVFIrNSuB+G7tVrAlVsZgETT5nljf+Iw==
 
-source-map-js@^1.2.0, source-map-js@^1.2.1:
+source-map-js@^1.2.0, source-map-js@^1.2.1, "source-map-js@>=0.6.2 <2.0.0":
   version "1.2.1"
   resolved "https://registry.npmmirror.com/source-map-js/-/source-map-js-1.2.1.tgz"
   integrity sha512-UXWMKhLOwVKb728IUtQPXxfYU+usdybtUrK/8uGE8CQMvrhOpwvzDBwj0QhSL7MQc7vIsISBG8VQ8+IDQxpfQA==
@@ -6493,6 +6674,11 @@ vary@~1.1.2:
   version "1.1.2"
   resolved "https://registry.npmmirror.com/vary/-/vary-1.1.2.tgz"
   integrity sha512-BNGbWLfd0eUPabhkXUVm0j8uuvREyTh5ovRa/dyow/BqAbZJyC+5fU+IzQOzmAKzYqYRAISoRhdQr3eIZ/PXqg==
+
+vue-cropper@^0.6.5:
+  version "0.6.5"
+  resolved "https://registry.npmmirror.com/vue-cropper/-/vue-cropper-0.6.5.tgz"
+  integrity sha512-lSvY6IpeA/Tv/iPZ/FOkMHVRBPSlm7t57nuHEZFBMRNOH8ElvfqVlnHGDOAMlvPhh9gHiddiQoASS+fY0MFX0g==
 
 vue-demi@*:
   version "0.14.10"

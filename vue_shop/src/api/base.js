@@ -38,6 +38,8 @@ const base = {
     get_user_info: "/user/info/",  // 获取用户信息的接口
     get_last_login: "/user/last_login/",  // 获取上次登录时间的接口
     upload_avatar: "/user/upload_avatar/", // 上传用户头像的接口
+    process_avatar: "/user/process_avatar/", // 高级头像处理接口
+    avatar_editor: "/user/profile/avatar-editor", // 头像编辑器页面
     get_sku_list: "/skus/",
     add_sku: "/skus/",
     update_sku: "/sku/",
