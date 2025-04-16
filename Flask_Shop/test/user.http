@@ -67,3 +67,7 @@ Content-Type: application/json
 
 ###测试上次登录时间
 GET http://127.0.0.1:5000/user/last_login/?username=baizhan
+
+
+###用户信息
+GET http://127.0.0.1:5000//user/info/

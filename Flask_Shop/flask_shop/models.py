@@ -15,6 +15,7 @@ class User(db.Model, BaseModel):
     phone = db.Column(db.String(11), unique=True)
     email = db.Column(db.String(50), unique=True)
     last_login = db.Column(db.DateTime)  # 添加最后登录时间字段
+    avatar = db.Column(db.String(255), default='/static/avatar/init.png')  # 添加头像字段
 
     #建立用户和角色之间的关系,多个用户对应一个角色
     role_id = db.Column(db.Integer, db.ForeignKey('t_roles.id'))
@@ -44,7 +45,7 @@ class User(db.Model, BaseModel):
             'role_name':  self.role.name if self.role else None ,#backref='role'表示在user模型中添加一个role属性，通过这个属性可以获取到角色信息
             'role_desc':  self.role.desc if self.role else None,
             'role_id': self.role.id if self.role else None,
-
+            'avatar': self.avatar,
         }
  
 

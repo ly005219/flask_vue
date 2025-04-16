@@ -9,7 +9,7 @@ app = create_app('development')
 CORS(app, supports_credentials=True) # 解决跨域问题
 
 
- #创建同步数据库对象,$env:FLASK_APP = "manager"
+ #创建同步数据库对象,cd
 migrate = Migrate(app, db)#传递app和数据库对象,创建完数据库后就进行三步命令：flask db init,flask db migrate -m '',flask db upgrade
 
 

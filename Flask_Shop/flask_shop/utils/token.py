@@ -37,7 +37,10 @@ def login_required(view_func):
     @wraps(view_func)
     def verify_token_info(*agrs,**kwagrs):
         token=request.headers.get('token')
-        if verify_token(token):#如果这个token为真(不为空并且为原来用户登录的token)
+        user_info = verify_token(token)
+        if user_info:  # 如果这个token为真(不为空并且为原来用户登录的token)
+             # 将解析出的用户信息添加到request对象中
+             request.current_user = user_info
              return view_func(*agrs,**kwagrs)
         else:
             return {'status': 401, 'msg': 'token过期或者无效'}

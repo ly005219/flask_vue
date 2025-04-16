@@ -134,7 +134,7 @@ const api = {
   //    }else{
   //      return axios.get(base.baseUrl + base.get_product_list)
   //    }
-    
+   
   //  },
     return axios.get(base.baseUrl + base.get_product_list, params)
 
@@ -189,9 +189,24 @@ const api = {
    },
    delete_sku(id) {
      return axios.delete(base.baseUrl + base.delete_sku + id + "/")
-   }
+   },
    
-
+   // 上传用户头像
+   upload_avatar(file) {
+     // 创建FormData对象
+     const formData = new FormData()
+     formData.append('avatar', file)
+     
+     return axios({
+       method: 'post',
+       url: base.baseUrl + base.upload_avatar,
+       data: formData,
+       headers: {
+         'Content-Type': 'multipart/form-data',
+         'token': sessionStorage.getItem('token')
+       }
+     })
+   }
 }
 
 

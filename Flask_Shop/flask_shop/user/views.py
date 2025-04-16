@@ -1,9 +1,11 @@
-from flask import request
+from flask import request, current_app, send_from_directory, url_for
 from flask_shop.user import user_bp,user_api
 
 from flask_shop import models,db
 from flask_restful import Resource,reqparse
 import re
+import os
+from werkzeug.utils import secure_filename
 
 from flask_shop.utils.token import generate_token,login_required
 
@@ -248,6 +250,14 @@ def check_phone():
         return {'status':400,'msg':'手机号已存在'}
     else:
         return {'status':200,'msg':'手机号可用'}
+
+# 添加获取默认头像的路由
+@user_bp.route('/default_avatar/')
+def default_avatar():
+    """返回一个默认的Base64编码头像数据"""
+    # 这是一个简单的Base64编码的1x1像素透明PNG图片
+    default_avatar_data = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII="
+    return {'status': 200, 'msg': 'success', 'data': {'avatar': default_avatar_data}}
     
 @user_bp.route('/last_login/')
 def user_last_login():
@@ -280,4 +290,82 @@ def user_last_login():
         
     except Exception as e:
         print(f"获取登录时间错误: {str(e)}")
+        return {'status': 500, 'msg': '服务器内部错误'}
+
+# 用于检查上传文件是否为允许的图片类型
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in {'png', 'jpg', 'jpeg', 'gif', 'webp'}
+
+# 添加上传头像接口
+@user_bp.route('/upload_avatar/', methods=['POST'])
+@login_required
+def upload_avatar():
+    user_id = request.current_user.get('id')
+    if not user_id:
+        return {'status': 401, 'msg': '未登录或 token 已过期'}
+    
+    try:
+        # 从数据库查询用户
+        user = models.User.query.get(user_id)
+        if not user:
+            return {'status': 404, 'msg': '用户不存在'}
+        
+        # 检查请求中是否有文件
+        if 'avatar' not in request.files:
+            return {'status': 400, 'msg': '未上传文件'}
+        
+        file = request.files['avatar']
+        if file.filename == '':
+            return {'status': 400, 'msg': '未选择文件'}
+        
+        if file and allowed_file(file.filename):
+            # 安全处理文件名
+            filename = secure_filename(f"avatar_{user_id}_{file.filename}")
+            # 确保头像目录存在
+            avatar_dir = os.path.join(current_app.static_folder, 'avatar')
+            if not os.path.exists(avatar_dir):
+                os.makedirs(avatar_dir)
+            
+            # 保存文件
+            file_path = os.path.join(avatar_dir, filename)
+            file.save(file_path)
+            
+            # 更新用户头像路径
+            avatar_url = f'/static/avatar/{filename}'
+            user.avatar = avatar_url
+            db.session.commit()
+            
+            return {'status': 200, 'msg': '头像上传成功', 'data': {'avatar': avatar_url}}
+        
+        return {'status': 400, 'msg': '不支持的文件类型'}
+        
+    except Exception as e:
+        print(f"上传头像错误: {str(e)}")
+        return {'status': 500, 'msg': '服务器内部错误'}
+
+@user_bp.route('/info/')
+@login_required
+def get_user_info():
+    # 从 token 中获取用户 ID
+    user_id = request.current_user.get('id')
+    if not user_id:
+        return {'status': 401, 'msg': '未登录或 token 已过期'}
+    
+    try:
+        # 从数据库查询用户
+        user = models.User.query.get(user_id)
+        if not user:
+            return {'status': 404, 'msg': '用户不存在'}
+        
+        # 获取用户信息，确保包括角色名称和其他信息
+        user_data = user.to_dict()
+        
+        return {
+            'status': 200,
+            'msg': 'success',
+            'data': user_data
+        }
+    except Exception as e:
+        print(f"获取用户信息错误: {str(e)}")
         return {'status': 500, 'msg': '服务器内部错误'}
