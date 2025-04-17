@@ -70,8 +70,8 @@ const api = {
      return axios.get(base.baseUrl + base.reset_pwd + id + "/")
 
    },
-   get_menu_list(params) {
-     return axios.get(base.baseUrl + base.get_menu_list, params)
+   get_menu_list() {
+     return axios.get(base.baseUrl + base.get_menu_list)
    },
    
    add_role(params) {
@@ -266,6 +266,20 @@ const api = {
        data: formData,
        headers: {
          'Content-Type': 'multipart/form-data',
+         'token': sessionStorage.getItem('token')
+       }
+     })
+   },
+   delete_menu(id) {
+     return axios.delete(base.baseUrl + base.del_menu + id + '/')
+   },
+   // 获取当前用户的菜单权限
+   getUserPermissions() {
+     return axios({
+       method: 'get',
+       url: base.baseUrl + base.user_permissions,
+       headers: {
+         'Content-Type': 'application/json',
          'token': sessionStorage.getItem('token')
        }
      })

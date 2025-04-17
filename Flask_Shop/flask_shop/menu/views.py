@@ -1,11 +1,12 @@
-from flask_shop.menu import menu_api
+from flask_shop.menu import menu_api,menu_bp
 from flask_restful import Resource
 from flask_shop import models
-from flask import request
+from flask import request, jsonify
 from flask_shop.utils.redis_cache import (
     cache_with_key, clear_cache_by_prefix,
     cache_update_with_delay_double_deletion
 )
+from flask_shop.utils.jwt_token import login_required
 
 
 class Menus(Resource):
@@ -161,4 +162,107 @@ class MenuResource(Resource):
 
 
 menu_api.add_resource(MenuResource, '/menu/<int:menu_id>/')
+
+
+@menu_bp.route('/api/menus/user_menus', methods=['GET'])
+@login_required
+def get_user_menus():
+    """获取当前用户的菜单权限"""
+    try:
+        # 从session中获取用户ID
+        user_id = request.user.id
+        
+        # 获取用户对象
+        user = models.User.query.get(user_id)
+        if not user:
+            return jsonify({'status': 404, 'msg': '用户不存在'})
+            
+        # 获取用户的角色
+        role = user.role
+        if not role:
+            return jsonify({'status': 403, 'msg': '用户没有分配角色'})
+            
+        # 获取角色的菜单权限
+        menus = role.get_menus_dict()
+        
+        # 构建树形结构
+        menu_tree = []
+        menu_map = {}
+        
+        # 首先创建一个以id为键的字典
+        for menu in menus:
+            menu['hasChildren'] = False
+            menu['children'] = []
+            menu_map[menu['id']] = menu
+            
+        # 构建树形结构
+        for menu in menus:
+            if not menu['parent_id']:  # 如果是顶级菜单
+                menu_tree.append(menu)
+            else:
+                # 这是一个子菜单，将其添加到父菜单的children列表中
+                parent = menu_map.get(menu['parent_id'])
+                if parent:
+                    parent['hasChildren'] = True
+                    parent['children'].append(menu)
+        
+        # 按照level和id排序
+        menu_tree.sort(key=lambda x: (x['level'], x['id']))
+        for menu in menu_tree:
+            if menu['children']:
+                menu['children'].sort(key=lambda x: (x['level'], x['id']))
+        
+        return jsonify({
+            'status': 200,
+            'msg': '获取成功',
+            'data': menu_tree
+        })
+        
+    except Exception as e:
+        print(f"获取用户菜单失败: {str(e)}")
+        return jsonify({'status': 500, 'msg': '获取用户菜单失败'})
+
+
+@menu_bp.route('/api/user/permissions', methods=['GET'])
+@login_required
+def get_current_user_permissions():
+    """获取当前登录用户的菜单权限"""
+    try:
+        # 从token中获取用户ID
+        user_id = request.current_user.get('id')
+        if not user_id:
+            return jsonify({'status': 401, 'msg': '未登录或token已过期'})
+            
+        # 获取用户对象
+        user = models.User.query.get(user_id)
+        if not user:
+            return jsonify({'status': 404, 'msg': '用户不存在'})
+            
+        # 获取用户的角色
+        role = user.role
+        if not role:
+            return jsonify({'status': 403, 'msg': '用户没有分配角色'})
+            
+        # 获取角色信息和菜单权限
+        role_info = {
+            'id': role.id,
+            'name': role.name,
+            'desc': role.desc
+        }
+        
+        # 获取角色的菜单权限
+        menus = role.get_menus_dict()
+        
+        return {
+            'status': 200,
+            'msg': '获取权限成功',
+            'data': {
+                'role': role_info,
+                'menus': menus
+            }
+        }
+    
+    except Exception as e:
+        print(f"获取用户权限失败: {str(e)}")
+        return {'status': 500, 'msg': f'获取用户权限失败: {str(e)}'}
 

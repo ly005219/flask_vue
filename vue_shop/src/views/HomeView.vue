@@ -1,3 +1,8 @@
+<!--
+  HomeView组件 - 主页视图
+  更新：添加了多级菜单支持
+  日期：2024年
+-->
 <template>
     <div class="common-layout container">
         <el-container class="container">
@@ -52,18 +57,57 @@
                             text-color="#fff" 
                             :unique-opened="true" 
                             router>
-                        <el-sub-menu :index="index+' '" v-for="(item, index) in menulist.menus">
-                            <template #title>
+                        <template v-for="(item, index) in menuList" :key="item.id || index">
+                            <!-- 如果菜单有子项且为一级菜单，使用子菜单组件 -->
+                            <el-sub-menu 
+                                :index="String(index)"
+                                v-if="item && item.level === 1 && item.children && item.children.length > 0">
+                                <template #title>
+                                    <el-icon>
+                                        <component :is="iconMapping[item.id] || 'Menu'"></component>
+                                    </el-icon>
+                                    <span>{{ item.name }}</span>
+                                </template>
+                                
+                                <!-- 遍历二级菜单 -->
+                                <template v-for="subItem in item.children" :key="subItem.id">
+                                    <!-- 如果二级菜单有子项，再创建子菜单 -->
+                                    <el-sub-menu 
+                                        v-if="subItem && subItem.children && subItem.children.length > 0" 
+                                        :index="subItem.id.toString()">
+                                        <template #title>
+                                            <span>{{ subItem.name }}</span>
+                                        </template>
+                                        
+                                        <!-- 遍历三级菜单项 -->
+                                        <el-menu-item 
+                                            v-for="childItem in subItem.children" 
+                                            :key="childItem.id"
+                                            :index="childItem.path">
+                                            {{ childItem.name }}
+                                        </el-menu-item>
+                                    </el-sub-menu>
+                                    
+                                    <!-- 如果二级菜单没有子项，则显示为菜单项 -->
+                                    <el-menu-item 
+                                        v-else
+                                        :index="subItem.path"
+                                        v-if="subItem">
+                                        {{ subItem.name }}
+                                    </el-menu-item>
+                                </template>
+                            </el-sub-menu>
+                            
+                            <!-- 无子菜单的一级菜单直接显示为菜单项 -->
+                            <el-menu-item 
+                                v-else-if="item && item.level === 1" 
+                                :index="item.path || String(index)">
                                 <el-icon>
-                                    <component :is="menulist.icons[item.id]"></component>
+                                    <component :is="iconMapping[item.id] || 'Menu'"></component>
                                 </el-icon>
-                                <span>{{ item.name}}</span>
-                            </template>
-                            <el-menu-item :index="childItem.path" 
-                                        v-for="childItem in item.children">
-                                {{ childItem.name }}
+                                <span>{{ item.name }}</span>
                             </el-menu-item>
-                        </el-sub-menu>
+                        </template>
                     </el-menu>
                 </el-aside>
 
@@ -333,7 +377,7 @@ import { useRouter } from 'vue-router'
 import api from '@/api/index'
 import { onMounted, reactive, ref, onUnmounted, nextTick } from 'vue'
 import { ElMessage } from 'element-plus'
-import { ArrowDown, UploadFilled, ZoomIn, ZoomOut, RefreshLeft, RefreshRight, Back, Right, PictureOutline, Crop, Upload } from '@element-plus/icons-vue'
+import { ArrowDown, UploadFilled, ZoomIn, ZoomOut, RefreshLeft, RefreshRight, Back, Right, PictureOutline, Crop, Upload, Menu } from '@element-plus/icons-vue'
 // 确保导入所有需要的图标
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 // 导入Cropper.js
@@ -341,16 +385,17 @@ import Cropper from 'cropperjs'
 // 引入自定义的Cropper样式
 import '@/assets/cropper.css'
 
-const menulist = reactive({
-    menus: [],
-    icons:{
-        '1':'User',
-        '2':'Tools',
-        '3':'Shop',
-        '4':'ShoppingCart',
-        '5':'PieChart',
-    }
-})
+// 菜单图标映射
+const iconMapping = {
+    '1': 'User',
+    '2': 'Tools',
+    '3': 'Shop',
+    '4': 'ShoppingCart',
+    '5': 'PieChart',
+}
+
+// 菜单列表 - 使用ref
+const menuList = ref([])
 
 // 头像上传相关变量
 const avatarFile = ref(null)
@@ -376,6 +421,11 @@ const rotationAngle = ref(0)
 const advancedFileInput = ref(null)
 const advancedImage = ref(null)
 
+// 权限相关变量
+const hasAddPermission = ref(false)
+const hasEditPermission = ref(false)
+const hasDeletePermission = ref(false)
+
 // 用户信息对象
 const userInfo = reactive({
     id: null,
@@ -386,9 +436,9 @@ const userInfo = reactive({
     avatar: 'http://localhost:5000/static/avatar/init.png'
 })
 
-// 监听页面刷新,DOM渲染完成后执行
+// 在组件挂载时获取菜单和用户信息
 onMounted(() => {
-    getMenuList()
+    loadUserMenu()
     getUserInfo()
     
     // 确保Cropper.js工具按钮显示正确
@@ -718,19 +768,65 @@ const closeAdvancedAvatarEditor = () => {
     filterIntensity.value = 0.5
 }
 
-const getMenuList = () => {
-    api.get_menu({type_: 'tree'}).then(res => {
-        console.log('菜单响应:', res)
-        if (res?.data?.status === 200) {
-            // 直接使用返回的数据
-            menulist.menus = res.data.data || []
+// 加载用户菜单
+const loadUserMenu = async () => {
+    try {
+        // 先尝试获取用户权限菜单
+        const permRes = await api.getUserPermissions()
+        console.log('获取用户权限菜单响应:', permRes)
+        
+        if (permRes?.data?.status === 200 && permRes.data.data && permRes.data.data.menus && permRes.data.data.menus.length > 0) {
+            // 如果成功获取用户权限菜单
+            menuList.value = permRes.data.data.menus
+            console.log('已加载用户权限菜单:', menuList.value)
+            
+            // 打印菜单结构，帮助调试多级菜单
+            console.log('菜单结构详情:')
+            menuList.value.forEach((item, index) => {
+                console.log(`一级菜单${index+1}:`, item.name, '(ID:', item.id, ')')
+                if (item.children && item.children.length > 0) {
+                    item.children.forEach((subItem, subIndex) => {
+                        console.log(`--二级菜单${subIndex+1}:`, subItem.name, '(ID:', subItem.id, ')')
+                        if (subItem.children && subItem.children.length > 0) {
+                            subItem.children.forEach((childItem, childIndex) => {
+                                console.log(`----三级菜单${childIndex+1}:`, childItem.name, '(ID:', childItem.id, ')')
+                            })
+                        }
+                    })
+                }
+            })
         } else {
-            ElMessage.error(res?.data?.msg || '获取菜单失败')
+            // 如果获取用户权限菜单失败，尝试获取所有菜单
+            const menuRes = await api.get_menu_list()
+            console.log('获取所有菜单响应:', menuRes)
+            
+            if (menuRes?.data?.status === 200) {
+                menuList.value = menuRes.data.data || []
+                console.log('已加载所有菜单:', menuList.value)
+                
+                // 打印菜单结构
+                console.log('菜单结构详情:')
+                menuList.value.forEach((item, index) => {
+                    console.log(`一级菜单${index+1}:`, item.name, '(ID:', item.id, ')')
+                    if (item.children && item.children.length > 0) {
+                        item.children.forEach((subItem, subIndex) => {
+                            console.log(`--二级菜单${subIndex+1}:`, subItem.name, '(ID:', subItem.id, ')')
+                            if (subItem.children && subItem.children.length > 0) {
+                                subItem.children.forEach((childItem, childIndex) => {
+                                    console.log(`----三级菜单${childIndex+1}:`, childItem.name, '(ID:', childItem.id, ')')
+                                })
+                            }
+                        })
+                    }
+                })
+            } else {
+                ElMessage.error('获取菜单失败')
+            }
         }
-    }).catch(err => {
-        console.error('获取菜单错误:', err)
-        ElMessage.error('获取菜单失败')
-    })
+    } catch (error) {
+        console.error('加载菜单错误:', error)
+        ElMessage.error('加载菜单失败，请检查网络连接')
+    }
 }
 
 // 获取用户信息
@@ -744,7 +840,7 @@ const getUserInfo = () => {
             userInfo.username = data.username || '未登录'
             userInfo.nick_name = data.nick_name || data.username || '未登录'
             userInfo.role_name = data.role_name || ''
-            userInfo.role_desc = data.role_desc || '游客'  // 使用role_desc替代role_name
+            userInfo.role_desc = data.role_desc || '游客'
             
             // 确保头像路径正确
             if (data.avatar) {

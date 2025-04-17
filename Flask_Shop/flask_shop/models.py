@@ -121,18 +121,20 @@ class Role(db.Model):
 
     def get_menus_dict(self):
         menus_dict = []
+        # 按id排序获取所有菜单
         menus = sorted(self.menus, key=lambda x: x.id)
         
-        for menu1 in menus:
-            if menu1.level == 1:
-                first_menu = menu1.to_dict_list()
-                first_menu['children'] = []
-                
-                for menu2 in self.menus:
-                    if menu2.parent_id == menu1.id and menu2.level == 2:
-                        first_menu['children'].append(menu2.to_dict_list())
-                        
-                menus_dict.append(first_menu)
+        # 先找出所有一级菜单
+        for menu in menus:
+            if menu.level == 1:  # 一级菜单
+                menu_dict = menu.to_dict_list()
+                menu_dict['children'] = []
+                # 查找该一级菜单的所有子菜单
+                for submenu in menus:
+                    if submenu.parent_id == menu.id:
+                        menu_dict['children'].append(submenu.to_dict_list())
+                menus_dict.append(menu_dict)
+        
         return menus_dict
 
 class Category(db.Model):

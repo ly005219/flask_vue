@@ -2,11 +2,11 @@
  * 存放所有网络请求地址
  */
 const base = {
-    baseUrl:"http://localhost:5000",     // 公共地址
+    baseUrl: 'http://127.0.0.1:5000',
     login:"/user/login/",           // 登录地址 
     test_response:"/user/test_login/", // 测试token是否有效地址
     get_menu:"/menu/menus/?type_=tree",     // 获取菜单地址,树的形式
-    get_menu_list:"/menu/menus/",     // 获取菜单列表地址
+    get_menu_list: '/menu/menus/',  // 获取菜单列表
     get_users:"/user/register/",     // 获取用户列表地址
     get_user_by_id:"/user/user/", //获取单个用户
     edit_user:"/user/user/",  //编辑用户
@@ -46,6 +46,8 @@ const base = {
     delete_sku: "/sku/",
     export_sku_pdf: "/skus/export/pdf/",
     export_sku_excel: "/skus/export/excel/",  // 修改导出接口
-  }
+    del_menu: '/menu/menu/',        // 删除菜单
+    user_permissions: '/menu/api/user/permissions', // 获取当前用户的菜单权限
+}
 export default base
   

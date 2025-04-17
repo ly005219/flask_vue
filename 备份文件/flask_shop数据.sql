@@ -1,54 +1,4 @@
-/*
- Navicat Premium Dump SQL
 
- Source Server         : mysql8
- Source Server Type    : MySQL
- Source Server Version : 80402 (8.4.2)
- Source Host           : localhost:3306
- Source Schema         : flask_shop
-
- Target Server Type    : MySQL
- Target Server Version : 80402 (8.4.2)
- File Encoding         : 65001
-
- Date: 18/04/2025 01:44:11
-*/
-
-SET NAMES utf8mb4;
-SET FOREIGN_KEY_CHECKS = 0;
-
--- ----------------------------
--- Table structure for alembic_version
--- ----------------------------
-DROP TABLE IF EXISTS `alembic_version`;
-CREATE TABLE `alembic_version`  (
-  `version_num` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-  PRIMARY KEY (`version_num`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
-
--- ----------------------------
--- Records of alembic_version
--- ----------------------------
-INSERT INTO `alembic_version` VALUES ('9d043c422ad8');
-
--- ----------------------------
--- Table structure for t_attributes
--- ----------------------------
-DROP TABLE IF EXISTS `t_attributes`;
-CREATE TABLE `t_attributes`  (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-  `value` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
-  `_type` enum('static','dynamic') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
-  `category_id` int NULL DEFAULT NULL,
-  PRIMARY KEY (`id`) USING BTREE,
-  INDEX `category_id`(`category_id` ASC) USING BTREE,
-  CONSTRAINT `t_attributes_ibfk_1` FOREIGN KEY (`category_id`) REFERENCES `t_categories` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 53 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
-
--- ----------------------------
--- Records of t_attributes
--- ----------------------------
 INSERT INTO `t_attributes` VALUES (1, '品牌', 'soulkiss', 'static', 65);
 INSERT INTO `t_attributes` VALUES (2, '适用年龄', '25-29周岁', 'static', 65);
 INSERT INTO `t_attributes` VALUES (3, '材质', '蚕丝', 'static', 65);
@@ -86,23 +36,8 @@ INSERT INTO `t_attributes` VALUES (48, '动态测试', NULL, 'dynamic', 65);
 INSERT INTO `t_attributes` VALUES (49, '哈哈哈', NULL, 'dynamic', 65);
 INSERT INTO `t_attributes` VALUES (50, '嘻嘻', '红色,蓝色,绿色', 'dynamic', 65);
 
--- ----------------------------
--- Table structure for t_categories
--- ----------------------------
-DROP TABLE IF EXISTS `t_categories`;
-CREATE TABLE `t_categories`  (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-  `parent_id` int NULL DEFAULT NULL,
-  `level` int NULL DEFAULT NULL,
-  PRIMARY KEY (`id`) USING BTREE,
-  INDEX `parent_id`(`parent_id` ASC) USING BTREE,
-  CONSTRAINT `t_categories_ibfk_1` FOREIGN KEY (`parent_id`) REFERENCES `t_categories` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 162 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
 
--- ----------------------------
--- Records of t_categories
--- ----------------------------
+
 INSERT INTO `t_categories` VALUES (1, '女装 /男装 /内衣', NULL, 1);
 INSERT INTO `t_categories` VALUES (2, '鞋靴 /箱包 /配件', NULL, 1);
 INSERT INTO `t_categories` VALUES (3, '童装玩具 /孕产 /用品', NULL, 1);
@@ -259,23 +194,8 @@ INSERT INTO `t_categories` VALUES (157, '测试的第三级', NULL, 3);
 INSERT INTO `t_categories` VALUES (158, '测试二级', 155, 2);
 INSERT INTO `t_categories` VALUES (160, '测试2', NULL, 1);
 
--- ----------------------------
--- Table structure for t_express
--- ----------------------------
-DROP TABLE IF EXISTS `t_express`;
-CREATE TABLE `t_express`  (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `order_id` int NULL DEFAULT NULL,
-  `content` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
-  `update_time` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
-  PRIMARY KEY (`id`) USING BTREE,
-  INDEX `order_id`(`order_id` ASC) USING BTREE,
-  CONSTRAINT `t_express_ibfk_1` FOREIGN KEY (`order_id`) REFERENCES `t_orders` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 38 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
 
--- ----------------------------
--- Records of t_express
--- ----------------------------
+
 INSERT INTO `t_express` VALUES (1, 1, '商品已经下单', '2050-01-19 12:17:21');
 INSERT INTO `t_express` VALUES (2, 1, '您的订单开始处理', '2050-01-19 12:27:20');
 INSERT INTO `t_express` VALUES (3, 1, '您的订单待配货', '2050-01-21 16:34:07');
@@ -312,25 +232,8 @@ INSERT INTO `t_express` VALUES (35, 2, '快件到达 【广州市天河区龙阳
 INSERT INTO `t_express` VALUES (36, 2, '快件交给李华,正在派送途中（联系电话：13888888888,顺丰已开启“安全呼叫”保护您的电话隐私,请放心接听！）', '2050-01-26 13:20:00');
 INSERT INTO `t_express` VALUES (37, 2, '已签收,感谢使用顺丰,期待再次为您服务', '2050-01-26 14:01:00');
 
--- ----------------------------
--- Table structure for t_menus
--- ----------------------------
-DROP TABLE IF EXISTS `t_menus`;
-CREATE TABLE `t_menus`  (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-  `level` int NULL DEFAULT NULL,
-  `path` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
-  `parent_id` int NULL DEFAULT NULL,
-  PRIMARY KEY (`id`) USING BTREE,
-  UNIQUE INDEX `name`(`name` ASC) USING BTREE,
-  INDEX `parent_id`(`parent_id` ASC) USING BTREE,
-  CONSTRAINT `t_menus_ibfk_1` FOREIGN KEY (`parent_id`) REFERENCES `t_menus` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 54 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
 
--- ----------------------------
--- Records of t_menus
--- ----------------------------
+
 INSERT INTO `t_menus` VALUES (-1, '全部', 0, NULL, NULL);
 INSERT INTO `t_menus` VALUES (1, '用户管理', 1, NULL, -1);
 INSERT INTO `t_menus` VALUES (2, '权限管理', 1, NULL, -1);
@@ -347,74 +250,14 @@ INSERT INTO `t_menus` VALUES (41, '订单列表', 2, '/order_list/', 4);
 INSERT INTO `t_menus` VALUES (51, '统计列表', 2, '/statistics_list/', 5);
 INSERT INTO `t_menus` VALUES (53, 'SKU管理', 2, '/sku_manage/', 3);
 
--- ----------------------------
--- Table structure for t_order_details
--- ----------------------------
-DROP TABLE IF EXISTS `t_order_details`;
-CREATE TABLE `t_order_details`  (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `order_id` int NULL DEFAULT NULL,
-  `product_id` int NULL DEFAULT NULL,
-  `number` int NULL DEFAULT NULL,
-  `price` float NULL DEFAULT NULL,
-  `total_price` float NULL DEFAULT NULL,
-  PRIMARY KEY (`id`) USING BTREE,
-  INDEX `order_id`(`order_id` ASC) USING BTREE,
-  INDEX `product_id`(`product_id` ASC) USING BTREE,
-  CONSTRAINT `t_order_details_ibfk_1` FOREIGN KEY (`product_id`) REFERENCES `t_products` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
-  CONSTRAINT `t_order_details_ibfk_2` FOREIGN KEY (`order_id`) REFERENCES `t_orders` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
-
--- ----------------------------
--- Records of t_order_details
--- ----------------------------
-
--- ----------------------------
--- Table structure for t_orders
--- ----------------------------
-DROP TABLE IF EXISTS `t_orders`;
-CREATE TABLE `t_orders`  (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `price` float NULL DEFAULT NULL,
-  `number` int NULL DEFAULT NULL,
-  `address` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
-  `pay_status` int NULL DEFAULT NULL,
-  `deliver_status` int NULL DEFAULT NULL,
-  `confirm_status` int NULL DEFAULT NULL,
-  `confirm_content` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
-  `user_id` int NULL DEFAULT NULL,
-  `create_time` datetime NULL DEFAULT NULL,
-  `update_time` datetime NULL DEFAULT NULL,
-  PRIMARY KEY (`id`) USING BTREE,
-  INDEX `user_id`(`user_id` ASC) USING BTREE,
-  CONSTRAINT `t_orders_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `t_users` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
-
--- ----------------------------
--- Records of t_orders
--- ----------------------------
 INSERT INTO `t_orders` VALUES (1, 100, 66, NULL, 1, 1, NULL, NULL, 1, NULL, NULL);
 INSERT INTO `t_orders` VALUES (2, 400, 66, NULL, 0, 0, NULL, NULL, 7, NULL, NULL);
 INSERT INTO `t_orders` VALUES (4, 300, 66, NULL, 1, 1, NULL, NULL, 9, NULL, NULL);
 
--- ----------------------------
--- Table structure for t_pictures
--- ----------------------------
-DROP TABLE IF EXISTS `t_pictures`;
-CREATE TABLE `t_pictures`  (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `path` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
-  `product_id` int NULL DEFAULT NULL,
-  PRIMARY KEY (`id`) USING BTREE,
-  INDEX `t_pictures_ibfk_1`(`product_id` ASC) USING BTREE,
-  CONSTRAINT `t_pictures_ibfk_1` FOREIGN KEY (`product_id`) REFERENCES `t_products` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 21 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
 
--- ----------------------------
--- Records of t_pictures
--- ----------------------------
 INSERT INTO `t_pictures` VALUES (9, '/static/uploads/9f3967549da0cd0b110b43b5e89726bb.png', 14);
 INSERT INTO `t_pictures` VALUES (11, '/static/uploads/b596b3ef7928adee32129569d0e5742e.png', 16);
+INSERT INTO `t_pictures` VALUES (12, '/static/uploads/55e196815d49abf42a4afa147d7f5f9c.png', 17);
 INSERT INTO `t_pictures` VALUES (13, '/static/uploads/f37a233ffc756974a011bbd8d9b695bc.png', 18);
 INSERT INTO `t_pictures` VALUES (14, '/static/uploads/d70a6cd6a43212ec33d5e3a0cc4953f2.png', 19);
 INSERT INTO `t_pictures` VALUES (15, '/static/uploads/bb468170e06c9bbf3d19f2c47e803589.png', 20);
@@ -423,26 +266,7 @@ INSERT INTO `t_pictures` VALUES (17, '/static/uploads/7177334b2a60789ee90b3408f8
 INSERT INTO `t_pictures` VALUES (18, '/static/uploads/06bd0575b11c4bdf86a630b9291e6ef4.png', 23);
 INSERT INTO `t_pictures` VALUES (20, '/static/uploads/4ec0e39ac92f8acbe3d3eaf97df9ac7d.png', 25);
 
--- ----------------------------
--- Table structure for t_product_attrs
--- ----------------------------
-DROP TABLE IF EXISTS `t_product_attrs`;
-CREATE TABLE `t_product_attrs`  (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `product_id` int NULL DEFAULT NULL,
-  `attr_id` int NULL DEFAULT NULL,
-  `value` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
-  `_type` enum('static','dynamic') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
-  PRIMARY KEY (`id`) USING BTREE,
-  INDEX `attr_id`(`attr_id` ASC) USING BTREE,
-  INDEX `t_product_attrs_ibfk_2`(`product_id` ASC) USING BTREE,
-  CONSTRAINT `t_product_attrs_ibfk_1` FOREIGN KEY (`product_id`) REFERENCES `t_products` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
-  CONSTRAINT `t_product_attrs_ibfk_2` FOREIGN KEY (`attr_id`) REFERENCES `t_attributes` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 282 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
 
--- ----------------------------
--- Records of t_product_attrs
--- ----------------------------
 INSERT INTO `t_product_attrs` VALUES (5, 14, 21, 'S,M,L,XL,XXL,XXXL', 'dynamic');
 INSERT INTO `t_product_attrs` VALUES (6, 14, 22, '冷艳红梨色-100%桑蚕丝,高雅浅杏-100%桑蚕丝,高雅浅杏-100%桑蚕丝-36517批次,冷艳红梨色-100%桑蚕丝-预售,高雅浅杏-100%桑蚕丝-预售,无视洗涤说明概不负责', 'dynamic');
 INSERT INTO `t_product_attrs` VALUES (7, 14, 1, 'soulkiss', 'static');
@@ -487,6 +311,28 @@ INSERT INTO `t_product_attrs` VALUES (67, 16, 17, '无袖', 'static');
 INSERT INTO `t_product_attrs` VALUES (68, 16, 18, '中长裙', 'static');
 INSERT INTO `t_product_attrs` VALUES (69, 16, 19, '其他/other', 'static');
 INSERT INTO `t_product_attrs` VALUES (70, 16, 20, 'A型', 'static');
+INSERT INTO `t_product_attrs` VALUES (71, 17, 21, 'S,M,L,XL,XXL,XXXL', 'dynamic');
+INSERT INTO `t_product_attrs` VALUES (72, 17, 22, '冷艳红梨色-100%桑蚕丝,高雅浅杏-100%桑蚕丝,高雅浅杏-100%桑蚕丝-36517批次,冷艳红梨色-100%桑蚕丝-预售,高雅浅杏-100%桑蚕丝-预售,无视洗涤说明概不负责', 'dynamic');
+INSERT INTO `t_product_attrs` VALUES (73, 17, 1, 'soulkiss', 'static');
+INSERT INTO `t_product_attrs` VALUES (74, 17, 2, '25-29周岁', 'static');
+INSERT INTO `t_product_attrs` VALUES (75, 17, 3, '蚕丝', 'static');
+INSERT INTO `t_product_attrs` VALUES (76, 17, 4, 'S M L', 'static');
+INSERT INTO `t_product_attrs` VALUES (77, 17, 5, '其他', 'static');
+INSERT INTO `t_product_attrs` VALUES (78, 17, 6, '纯色', 'static');
+INSERT INTO `t_product_attrs` VALUES (79, 17, 7, '通勤', 'static');
+INSERT INTO `t_product_attrs` VALUES (80, 17, 8, '简约', 'static');
+INSERT INTO `t_product_attrs` VALUES (81, 17, 9, '立领', 'static');
+INSERT INTO `t_product_attrs` VALUES (82, 17, 10, '单排扣', 'static');
+INSERT INTO `t_product_attrs` VALUES (83, 17, 11, '冷艳红梨色-100%桑蚕丝 高雅浅杏-100%桑蚕丝 高雅浅杏-100%桑蚕丝-36517批次 冷艳红梨色-100%桑蚕丝-预售 高雅浅杏-100%桑蚕丝-预售 无视洗涤说明概不负责', 'static');
+INSERT INTO `t_product_attrs` VALUES (84, 17, 12, '单件', 'static');
+INSERT INTO `t_product_attrs` VALUES (85, 17, 13, 'S904548', 'static');
+INSERT INTO `t_product_attrs` VALUES (86, 17, 14, '95%以上', 'static');
+INSERT INTO `t_product_attrs` VALUES (87, 17, 15, 'A字裙', 'static');
+INSERT INTO `t_product_attrs` VALUES (88, 17, 16, '2019年夏季', 'static');
+INSERT INTO `t_product_attrs` VALUES (89, 17, 17, '无袖', 'static');
+INSERT INTO `t_product_attrs` VALUES (90, 17, 18, '中长裙', 'static');
+INSERT INTO `t_product_attrs` VALUES (91, 17, 19, '其他/other', 'static');
+INSERT INTO `t_product_attrs` VALUES (92, 17, 20, 'A型', 'static');
 INSERT INTO `t_product_attrs` VALUES (93, 18, 21, 'S,M,L,XL,XXL,XXXL', 'dynamic');
 INSERT INTO `t_product_attrs` VALUES (94, 18, 22, '冷艳红梨色-100%桑蚕丝,高雅浅杏-100%桑蚕丝,高雅浅杏-100%桑蚕丝-36517批次,冷艳红梨色-100%桑蚕丝-预售,高雅浅杏-100%桑蚕丝-预售,无视洗涤说明概不负责', 'dynamic');
 INSERT INTO `t_product_attrs` VALUES (95, 18, 1, 'soulkiss', 'static');
@@ -648,46 +494,17 @@ INSERT INTO `t_product_attrs` VALUES (279, 25, 19, '其他/other', 'static');
 INSERT INTO `t_product_attrs` VALUES (280, 25, 20, 'A型', 'static');
 INSERT INTO `t_product_attrs` VALUES (281, 25, 47, '红色，黄色', 'static');
 
--- ----------------------------
--- Table structure for t_products
--- ----------------------------
-DROP TABLE IF EXISTS `t_products`;
-CREATE TABLE `t_products`  (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `name` varchar(512) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-  `price` float NULL DEFAULT NULL,
-  `number` int NULL DEFAULT NULL,
-  `introduce` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL,
-  `big_image` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
-  `small_image` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
-  `state` int NULL DEFAULT NULL,
-  `is_promote` int NULL DEFAULT NULL,
-  `hot_number` int NULL DEFAULT NULL,
-  `weight` int NULL DEFAULT NULL,
-  `cid_one` int NULL DEFAULT NULL,
-  `cid_two` int NULL DEFAULT NULL,
-  `cid_three` int NULL DEFAULT NULL,
-  PRIMARY KEY (`id`) USING BTREE,
-  INDEX `cid_one`(`cid_one` ASC) USING BTREE,
-  INDEX `cid_three`(`cid_three` ASC) USING BTREE,
-  INDEX `cid_two`(`cid_two` ASC) USING BTREE,
-  CONSTRAINT `t_products_ibfk_1` FOREIGN KEY (`cid_one`) REFERENCES `t_categories` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
-  CONSTRAINT `t_products_ibfk_2` FOREIGN KEY (`cid_three`) REFERENCES `t_categories` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
-  CONSTRAINT `t_products_ibfk_3` FOREIGN KEY (`cid_two`) REFERENCES `t_categories` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 26 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
 
--- ----------------------------
--- Records of t_products
--- ----------------------------
 INSERT INTO `t_products` VALUES (1, 'SOULKISS 高冷气质硬核款 16姆米桑蚕真丝双绉显瘦挂脖露肩连衣裙', 879.99, 100, 'chanpin', '', '', 2, 1, 30, 100, 1, 17, 65);
 INSERT INTO `t_products` VALUES (2, 'AmandaX定制重磅奢华真丝提花连肩袖小A连衣裙', 879.99, 100, 'chanpin', '', '', 1, 1, 30, 100, 1, 17, 65);
 INSERT INTO `t_products` VALUES (3, 'AmandaX定制30姆米2色重缎可调节V领吊带连衣裙', 1380, 100, 'chanpin', '', '', 2, 1, 30, 100, 1, 17, 65);
 INSERT INTO `t_products` VALUES (4, '吊带连衣裙女2020夏季新款V领雪纺气质印花A字复古小碎花过膝长裙', 359, 100, 'chanpin', '', '', -1, 1, 30, 100, 1, 17, 65);
 INSERT INTO `t_products` VALUES (10, '测试商品1', 199, 100, '这是一件测试商品', NULL, NULL, 0, NULL, NULL, 10, 1, 17, 65);
 INSERT INTO `t_products` VALUES (11, '测试商品2', 12, 15, '这是一件测试商品', NULL, NULL, -1, NULL, NULL, 10, 1, 17, 65);
-INSERT INTO `t_products` VALUES (12, '测试商品1', 192, 1000, '这是一件测试商品', NULL, NULL, -1, NULL, NULL, 10, 1, 17, 65);
+INSERT INTO `t_products` VALUES (12, '测试商品1', 199, 100, '这是一件测试商品', NULL, NULL, NULL, NULL, NULL, 10, 1, 17, 65);
 INSERT INTO `t_products` VALUES (14, 'm6', 1, 2, '<p>info1233</p>', NULL, NULL, 1, NULL, NULL, 3, 1, 17, 65);
-INSERT INTO `t_products` VALUES (16, 'm3', 1, 2, '<p>增加3</p>', NULL, NULL, -1, NULL, NULL, 3, 1, 17, 65);
+INSERT INTO `t_products` VALUES (16, 'm3', 1, 2, '<p>增加3</p>', NULL, NULL, NULL, NULL, NULL, 3, 1, 17, 65);
+INSERT INTO `t_products` VALUES (17, 'm4', 1, 2, '<p>哈哈哈</p>', NULL, NULL, NULL, NULL, NULL, 3, 1, 17, 65);
 INSERT INTO `t_products` VALUES (18, 'm5', 1, 2, '<p>asd</p>', NULL, NULL, NULL, NULL, NULL, 3, 1, 17, 65);
 INSERT INTO `t_products` VALUES (19, '柠檬', 12, 23, '<p>q</p>', NULL, NULL, 1, NULL, NULL, 3, 1, 17, 65);
 INSERT INTO `t_products` VALUES (20, 'm9', 12, 3, '<p>q</p>', NULL, NULL, NULL, NULL, NULL, 4, 1, 17, 65);
@@ -696,43 +513,14 @@ INSERT INTO `t_products` VALUES (22, '超级大西瓜', 15, 25, '<p>阿德飒飒
 INSERT INTO `t_products` VALUES (23, '超级火龙果', 199, 100, '<p>请</p>', NULL, NULL, 0, NULL, NULL, 1, 1, 17, 65);
 INSERT INTO `t_products` VALUES (25, 'sss', 23, 12, '', NULL, NULL, NULL, NULL, NULL, 12, 1, 17, 65);
 
--- ----------------------------
--- Table structure for t_roles
--- ----------------------------
-DROP TABLE IF EXISTS `t_roles`;
-CREATE TABLE `t_roles`  (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-  `desc` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
-  PRIMARY KEY (`id`) USING BTREE,
-  UNIQUE INDEX `name`(`name` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 7 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
 
--- ----------------------------
--- Records of t_roles
--- ----------------------------
 INSERT INTO `t_roles` VALUES (1, 'sroot', '系统管理员');
 INSERT INTO `t_roles` VALUES (2, 'admin', '管理员');
 INSERT INTO `t_roles` VALUES (3, 'vip', 'VIP会员');
 INSERT INTO `t_roles` VALUES (4, 'user', '普通用户');
 INSERT INTO `t_roles` VALUES (5, 'guest', '游客');
 
--- ----------------------------
--- Table structure for t_roles_menus
--- ----------------------------
-DROP TABLE IF EXISTS `t_roles_menus`;
-CREATE TABLE `t_roles_menus`  (
-  `role_id` int NOT NULL,
-  `menu_id` int NOT NULL,
-  PRIMARY KEY (`role_id`, `menu_id`) USING BTREE,
-  INDEX `menu_id`(`menu_id` ASC) USING BTREE,
-  CONSTRAINT `t_roles_menus_ibfk_1` FOREIGN KEY (`menu_id`) REFERENCES `t_menus` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
-  CONSTRAINT `t_roles_menus_ibfk_2` FOREIGN KEY (`role_id`) REFERENCES `t_roles` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
 
--- ----------------------------
--- Records of t_roles_menus
--- ----------------------------
 INSERT INTO `t_roles_menus` VALUES (1, 1);
 INSERT INTO `t_roles_menus` VALUES (2, 1);
 INSERT INTO `t_roles_menus` VALUES (3, 1);
@@ -762,30 +550,7 @@ INSERT INTO `t_roles_menus` VALUES (1, 41);
 INSERT INTO `t_roles_menus` VALUES (1, 51);
 INSERT INTO `t_roles_menus` VALUES (1, 53);
 
--- ----------------------------
--- Table structure for t_skus
--- ----------------------------
-DROP TABLE IF EXISTS `t_skus`;
-CREATE TABLE `t_skus`  (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `product_id` int NULL DEFAULT NULL,
-  `sku_code` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
-  `specifications` json NULL,
-  `price` decimal(10, 2) NULL DEFAULT NULL,
-  `stock` int NULL DEFAULT NULL,
-  `sales` int NULL DEFAULT 0,
-  `status` int NULL DEFAULT 1,
-  `create_time` datetime NULL DEFAULT CURRENT_TIMESTAMP,
-  `update_time` datetime NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`) USING BTREE,
-  UNIQUE INDEX `sku_code`(`sku_code` ASC) USING BTREE,
-  INDEX `product_id`(`product_id` ASC) USING BTREE,
-  CONSTRAINT `t_skus_ibfk_1` FOREIGN KEY (`product_id`) REFERENCES `t_products` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 8 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
 
--- ----------------------------
--- Records of t_skus
--- ----------------------------
 INSERT INTO `t_skus` VALUES (1, 1, 'SKU-001', '{\"尺码\": \"S\", \"颜色\": \"红色\"}', 199.99, 100, 20, 1, '2024-12-25 11:38:14', '2024-12-25 11:38:14');
 INSERT INTO `t_skus` VALUES (2, 1, 'SKU-002', '{\"尺码\": \"M\", \"颜色\": \"红色\"}', 199.99, 150, 30, 1, '2024-12-25 11:38:14', '2024-12-25 11:38:14');
 INSERT INTO `t_skus` VALUES (3, 1, 'SKU-003', '{\"尺码\": \"L\", \"颜色\": \"红色\"}', 199.99, 80, 15, 1, '2024-12-25 11:38:14', '2024-12-25 11:38:14');
@@ -793,48 +558,12 @@ INSERT INTO `t_skus` VALUES (4, 1, 'SKU-004', '{\"尺码\": \"S\", \"颜色\": \
 INSERT INTO `t_skus` VALUES (5, 1, 'SKU-005', '{\"尺码\": \"M\", \"颜色\": \"蓝色\"}', 222.00, 90, 40, 1, '2024-12-25 11:38:14', '2024-12-25 11:40:14');
 INSERT INTO `t_skus` VALUES (6, 1, 'SKU-006', '{\"尺码\": \"L\", \"颜色\": \"蓝色\"}', 199.99, 72, 10, 1, '2024-12-25 11:38:14', '2024-12-25 12:19:13');
 
--- ----------------------------
--- Table structure for t_spec_templates
--- ----------------------------
-DROP TABLE IF EXISTS `t_spec_templates`;
-CREATE TABLE `t_spec_templates`  (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
-  `category_id` int NULL DEFAULT NULL,
-  `specs` json NULL,
-  `create_time` datetime NULL DEFAULT CURRENT_TIMESTAMP,
-  `update_time` datetime NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`) USING BTREE,
-  INDEX `category_id`(`category_id` ASC) USING BTREE,
-  CONSTRAINT `t_spec_templates_ibfk_1` FOREIGN KEY (`category_id`) REFERENCES `t_categories` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
 
--- ----------------------------
--- Records of t_spec_templates
--- ----------------------------
 INSERT INTO `t_spec_templates` VALUES (1, '服装规格', 65, '{\"尺码\": [\"S\", \"M\", \"L\", \"XL\", \"XXL\"], \"颜色\": [\"红色\", \"蓝色\", \"黑色\", \"白色\"]}', '2024-12-25 11:38:15', '2024-12-25 11:38:15');
 INSERT INTO `t_spec_templates` VALUES (2, '鞋靴规格', 84, '{\"鞋码\": [\"35\", \"36\", \"37\", \"38\", \"39\", \"40\", \"41\", \"42\", \"43\", \"44\"], \"颜色\": [\"黑色\", \"白色\", \"棕色\"]}', '2024-12-25 11:38:15', '2024-12-25 11:38:15');
 INSERT INTO `t_spec_templates` VALUES (3, '手机规格', 28, '{\"内存\": [\"4GB\", \"6GB\", \"8GB\"], \"存储\": [\"64GB\", \"128GB\", \"256GB\"], \"颜色\": [\"黑色\", \"白色\", \"金色\"]}', '2024-12-25 11:38:15', '2024-12-25 11:38:15');
 
--- ----------------------------
--- Table structure for t_stock_logs
--- ----------------------------
-DROP TABLE IF EXISTS `t_stock_logs`;
-CREATE TABLE `t_stock_logs`  (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `sku_id` int NULL DEFAULT NULL,
-  `change_amount` int NULL DEFAULT NULL,
-  `type` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
-  `operator` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
-  `create_time` datetime NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`) USING BTREE,
-  INDEX `t_stock_logs_ibfk_1`(`sku_id` ASC) USING BTREE,
-  CONSTRAINT `t_stock_logs_ibfk_1` FOREIGN KEY (`sku_id`) REFERENCES `t_skus` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 14 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
 
--- ----------------------------
--- Records of t_stock_logs
--- ----------------------------
 INSERT INTO `t_stock_logs` VALUES (1, 1, -10, 'sale', 'system', '2024-12-25 11:38:16');
 INSERT INTO `t_stock_logs` VALUES (2, 1, 50, 'restock', 'admin', '2024-12-25 11:38:16');
 INSERT INTO `t_stock_logs` VALUES (3, 2, -5, 'sale', 'system', '2024-12-25 11:38:16');
@@ -847,40 +576,13 @@ INSERT INTO `t_stock_logs` VALUES (9, 5, 0, 'manual', 'unknown', '2024-12-25 11:
 INSERT INTO `t_stock_logs` VALUES (10, 5, 0, 'manual', 'unknown', '2024-12-25 11:40:14');
 INSERT INTO `t_stock_logs` VALUES (11, 6, 2, 'manual', 'unknown', '2024-12-25 12:19:13');
 
--- ----------------------------
--- Table structure for t_users
--- ----------------------------
-DROP TABLE IF EXISTS `t_users`;
-CREATE TABLE `t_users`  (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `username` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-  `pwd` varchar(800) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
-  `nick_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
-  `phone` varchar(11) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
-  `email` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
-  `create_time` datetime NULL DEFAULT NULL,
-  `update_time` datetime NULL DEFAULT NULL,
-  `role_id` int NULL DEFAULT NULL,
-  `last_login` datetime NULL DEFAULT NULL,
-  `avatar` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
-  PRIMARY KEY (`id`) USING BTREE,
-  UNIQUE INDEX `username`(`username` ASC) USING BTREE,
-  UNIQUE INDEX `email`(`email` ASC) USING BTREE,
-  UNIQUE INDEX `phone`(`phone` ASC) USING BTREE,
-  INDEX `t_users_ibfk_1`(`role_id` ASC) USING BTREE,
-  CONSTRAINT `t_users_ibfk_1` FOREIGN KEY (`role_id`) REFERENCES `t_roles` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 22 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
+INSERT INTO `t_users` VALUES (1, 'baizhan', 'pbkdf2:sha256:1000000$ZXusoCN5cQJClDry$f01e4e1f5c965f8a63bbcf979c81f9b7c5aaaf63f1b8f3c4285017a1642570ae', '西施', '15658475666', '321@qq.com', '2024-11-02 21:45:34', '2024-12-25 20:33:11', 2, '2024-12-25 20:30:24',NULL);
+INSERT INTO `t_users` VALUES (7, 'sxt', 'pbkdf2:sha256:1000000$MeKBN04q4tfCKFDR$c9f1cd37b4ea16da033e78a1f4f5d55ec1f2644beb542613a035148ee9c258ce', '貂蝉', '13654896571', '121@123.com', '2024-11-10 14:59:46', '2024-12-09 22:36:57', 2, NULL,NULL);
+INSERT INTO `t_users` VALUES (9, '刘备', 'pbkdf2:sha256:1000000$mVk8ekP2Ap3218P9$0a168c5bdf7bcf38eabb59522f689b42e0f4718129a9ee34778d2029cef945cf', '玄德', '13365478512', '12365@qq.com', '2024-11-11 12:36:30', '2024-11-11 12:36:30', 4, NULL,NULL);
+INSERT INTO `t_users` VALUES (11, '孙悟空', 'pbkdf2:sha256:1000000$qWXdI2QNv1saikr0$bf5e3cfaba9b4afcc14afacd09e02e01c5f45d629a38ead543e1e0c914ef5413', '齐天大圣', '18236547851', '225@qq.com', '2024-11-11 12:46:27', '2024-12-25 17:26:38', 1, '2024-12-25 17:26:38',NULL);
+INSERT INTO `t_users` VALUES (12, '李白', 'pbkdf2:sha256:1000000$ZqtXlsFtJsiFgApQ$773ecab328bb43e4703a56a0a5744c80680132eb62b0d06c77a5ef7005bd2d3d', '诗仙', '15896585478', '12@qq.com', '2024-11-11 12:49:58', '2024-11-11 12:49:58', 2, NULL,NULL);
+INSERT INTO `t_users` VALUES (14, '亚索', 'pbkdf2:sha256:1000000$29IrgFYr99VBYqng$9512fa8aba3d9516646b7e6ac97d5ed75c3ad2faa682c872616139925978512a', '疾风', '13369875896', '234@qq.com', '2024-11-14 11:48:06', '2024-11-14 11:48:06', 4, NULL,NULL);
+INSERT INTO `t_users` VALUES (18, '袁绍', 'pbkdf2:sha256:1000000$4xQllBftxD3ItnWa$5bce55a6cf8d3010892e87cb7c4a13b831724b97953ff7173ea52d0ea7a0e616', '本初', '13365478564', '1234@qq.com', '2024-12-09 22:09:36', '2024-12-09 22:09:36', 1, NULL,NULL);
+INSERT INTO `t_users` VALUES (19, '西瓜', 'pbkdf2:sha256:1000000$axekwOKvZuqXAzer$675f6b530a997d37d1c9569e5c6a3dfc288b98a0af2a7a60b4e4399007a8445f', 'water', '13365478542', '11112@qq.com', '2024-12-11 05:54:36', '2024-12-11 05:54:36', 1, NULL,NULL);
 
--- ----------------------------
--- Records of t_users
--- ----------------------------
-INSERT INTO `t_users` VALUES (1, 'baizhan', 'pbkdf2:sha256:1000000$ZXusoCN5cQJClDry$f01e4e1f5c965f8a63bbcf979c81f9b7c5aaaf63f1b8f3c4285017a1642570ae', '西施', '15658475666', '321@qq.com', '2024-11-02 21:45:34', '2025-04-18 01:10:44', 2, '2025-04-18 01:10:44', NULL);
-INSERT INTO `t_users` VALUES (7, 'sxt', 'pbkdf2:sha256:1000000$MeKBN04q4tfCKFDR$c9f1cd37b4ea16da033e78a1f4f5d55ec1f2644beb542613a035148ee9c258ce', '貂蝉', '13654896571', '121@123.com', '2024-11-10 14:59:46', '2024-12-09 22:36:57', 2, NULL, NULL);
-INSERT INTO `t_users` VALUES (9, '刘备', 'pbkdf2:sha256:1000000$mVk8ekP2Ap3218P9$0a168c5bdf7bcf38eabb59522f689b42e0f4718129a9ee34778d2029cef945cf', '玄德', '13365478512', '12365@qq.com', '2024-11-11 12:36:30', '2024-11-11 12:36:30', 4, NULL, NULL);
-INSERT INTO `t_users` VALUES (11, '孙悟空', 'pbkdf2:sha256:1000000$qWXdI2QNv1saikr0$bf5e3cfaba9b4afcc14afacd09e02e01c5f45d629a38ead543e1e0c914ef5413', '齐天大圣', '18236547851', '225@qq.com', '2024-11-11 12:46:27', '2024-12-25 17:26:38', 1, '2024-12-25 17:26:38', NULL);
-INSERT INTO `t_users` VALUES (12, '李白', 'pbkdf2:sha256:1000000$ZqtXlsFtJsiFgApQ$773ecab328bb43e4703a56a0a5744c80680132eb62b0d06c77a5ef7005bd2d3d', '诗仙', '15896585478', '12@qq.com', '2024-11-11 12:49:58', '2024-11-11 12:49:58', 2, NULL, NULL);
-INSERT INTO `t_users` VALUES (14, '亚索', 'pbkdf2:sha256:1000000$29IrgFYr99VBYqng$9512fa8aba3d9516646b7e6ac97d5ed75c3ad2faa682c872616139925978512a', '疾风', '13369875896', '234@qq.com', '2024-11-14 11:48:06', '2024-11-14 11:48:06', 4, NULL, NULL);
-INSERT INTO `t_users` VALUES (18, '袁绍', 'pbkdf2:sha256:1000000$4xQllBftxD3ItnWa$5bce55a6cf8d3010892e87cb7c4a13b831724b97953ff7173ea52d0ea7a0e616', '本初', '13365478564', '1234@qq.com', '2024-12-09 22:09:36', '2024-12-09 22:09:36', 1, NULL, NULL);
-INSERT INTO `t_users` VALUES (19, '西瓜', 'pbkdf2:sha256:1000000$axekwOKvZuqXAzer$675f6b530a997d37d1c9569e5c6a3dfc288b98a0af2a7a60b4e4399007a8445f', 'water', '13365478542', '11112@qq.com', '2024-12-11 05:54:36', '2024-12-11 05:54:36', 1, NULL, NULL);
 
-SET FOREIGN_KEY_CHECKS = 1;

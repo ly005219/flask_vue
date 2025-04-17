@@ -85,6 +85,12 @@ const routes = [
         name: 'SKUManage',
         component: () => import('../views/SKUView.vue'),
         meta: { title: 'SKU管理' }
+      },
+      {
+        path: '/my_permissions/',
+        name: 'UserPermissions',
+        component: () => import('../views/UserPermissions.vue'),
+        meta: { title: '我的权限' }
       }
 
       
