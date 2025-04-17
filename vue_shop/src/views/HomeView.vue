@@ -1,3 +1,8 @@
+<!--
+  HomeView组件 - 主页视图
+  更新：添加了多级菜单支持
+  日期：2024年
+-->
 <template>
     <div class="common-layout container">
         <el-container class="container">
