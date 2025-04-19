@@ -313,10 +313,11 @@ const submitForm = () => {
             addFormRef.value.resetFields()
             //清空图片列表
             fileList.value = []
-               // 清空富文本编辑器的内容
+            // 清空富文本编辑器的内容
             if (editorComponentRef.value) {
-                console.log(editorComponentRef.value);
-                editorComponentRef.value='';
+                // 正确的方式是不直接操作editorComponentRef.value
+                // 而是调用编辑器组件内部的方法或让它监听值的变化
+                addForm.content = ''; // 只需重置内容值即可
             }
             //清空分类选择
             options.selectID = null
@@ -345,10 +346,31 @@ const submitForm = () => {
 
 .demo-tabs {
     margin-top: 30px;
-
 }
+
 .preview-img {
     width: 100%;
 }
 
+/* 添加以下样式来优化TinyMCE在小屏幕上的显示 */
+:deep(.tox-tinymce) {
+    max-width: 100%;
+    overflow: hidden;
+}
+
+:deep(.tox-editor-container) {
+    display: flex;
+    flex-direction: column;
+}
+
+:deep(.tox-toolbar) {
+    flex-wrap: wrap;
+}
+
+/* 在小屏幕上适应性调整 */
+@media (max-width: 768px) {
+    :deep(.tox-toolbar__group) {
+        flex-wrap: wrap;
+    }
+}
 </style>

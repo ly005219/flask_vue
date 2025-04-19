@@ -290,3 +290,18 @@ def md5_file():
 
     return hashlib.md5(str(time()).encode('utf-8')).hexdigest()
 
+
+#加一个api获取所有的商品
+@product_bp.route('/get_all_products/',methods=['GET'])
+def get_all_products():
+    '''
+    获取所有的商品
+    '''
+    try:
+        #获取所有的商品
+        products = models.Product.query.all()
+        #返回商品列表
+        return {'status': 200, 'msg': '获取商品列表成功', 'data': [p.to_dict() for p in products]}
+    except Exception as e:
+        return {'status': 500, 'msg': '获取商品列表失败'}
+    

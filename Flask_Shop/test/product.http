@@ -1,5 +1,8 @@
 ###获取商品列表
-GET http://127.0.0.1:5000/products/?name=连衣裙
+GET http://127.0.0.1:5000/products
+
+###获取所有的商品
+GET http://127.0.0.1:5000/get_all_products/
 
 ###删除单个商品
 DELETE http://127.0.0.1:5000/product/24/

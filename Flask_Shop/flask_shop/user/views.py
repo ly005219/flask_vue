@@ -1,4 +1,4 @@
-from flask import request, current_app, send_from_directory, url_for, render_template, redirect
+from flask import request, current_app, send_from_directory, url_for, render_template, redirect, jsonify, make_response
 from flask_shop.user import user_bp,user_api
 from flask_shop import models,db
 from flask_restful import Resource,reqparse
@@ -123,36 +123,43 @@ user_api.add_resource(UserReigster, '/register/')
 from datetime import datetime
 
 #登录功能
-@user_bp.route('/login/', methods=[ 'POST'])
+@user_bp.route('/login/', methods=['POST', 'OPTIONS'])
 def login():
+    # 特别处理OPTIONS预检请求
+    if request.method == 'OPTIONS':
+        response = jsonify({})
+        # 不需要手动添加CORS头，flask-cors会处理
+        return response, 200
+        
+    try:
+        # 获取和验证JSON数据
+        if not request.is_json:
+            return {'status': 400, 'msg': '请求格式必须是JSON'}, 400
+            
+        data = request.get_json()
+        name = data.get('username')
+        pwd = data.get('pwd')
 
-    name=request.get_json().get('username')
-    pwd=request.get_json().get('pwd')
-
-
-    if not all([name, pwd]):
-
-        return {'status':400,'msg':'参数不完整'}
-    
-    else:
-        user=models.User.query.filter(models.User.username==name).first()
+        if not all([name, pwd]):
+            return {'status': 400, 'msg': '参数不完整'}, 400
+        
+        user = models.User.query.filter(models.User.username == name).first()
         if not user:
-            return {'status':400,'msg':'用户不存在'}
+            return {'status': 400, 'msg': '用户不存在'}, 400
+        
+        if user.check_password(pwd):
+            # 更新最后登录时间
+            user.last_login = datetime.now()
+            db.session.commit()
+            # 生成token
+            token = generate_token({'id': user.id})
+            
+            return {'status': 200, 'msg': '登录成功', 'data': {'token': token}}, 200
         else:
-            if user.check_password(pwd):
-                            # 更新最后登录时间
-                user.last_login = datetime.now()
-                db.session.commit()
-                #生产token
-                token=generate_token({'id':user.id})
-                
-
-                return {'status':200,'msg':'登录成功','data':{'token':token}}
-
-
-              
-            else:
-                return {'status':400,'msg':'密码错误'}
+            return {'status': 400, 'msg': '密码错误'}, 400
+    except Exception as e:
+        print(f"登录异常: {str(e)}")
+        return {'status': 500, 'msg': f'服务器错误: {str(e)}'}, 500
 
 class User(Resource):
 

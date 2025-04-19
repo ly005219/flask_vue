@@ -7,6 +7,7 @@ from flask_shop import models, db
 import time
 import random
 from openpyxl.styles import PatternFill, Font, Border, Side, Alignment
+from sqlalchemy import text
 
 class SKUs(Resource):
     def get(self):
@@ -113,13 +114,28 @@ class SKUManage(Resource):
             sku = models.SKU.query.get(id)
             if not sku:
                 return {'status': 404, 'msg': 'SKU不存在'}
+            
+            # 使用数据库事务保证操作的原子性
+            # 如果任何步骤失败，整个事务将回滚
+            try:
+                # 使用参数化查询防止SQL注入
+                # 先删除关联的库存日志
+                db.session.execute(text("DELETE FROM t_stock_logs WHERE sku_id = :sku_id"), {"sku_id": id})
                 
-            db.session.delete(sku)
-            db.session.commit()
-            return {'status': 200, 'msg': '删除SKU成功'}
+                # 删除SKU
+                db.session.delete(sku)
+                
+                # 提交所有更改
+                db.session.commit()
+                return {'status': 200, 'msg': '删除SKU成功'}
+            except Exception as db_error:
+                # 发生错误，回滚事务
+                db.session.rollback()
+                print(f"删除SKU数据库操作错误: {str(db_error)}")
+                return {'status': 500, 'msg': f'删除SKU失败: {str(db_error)}'}
         except Exception as e:
-            db.session.rollback()
-            return {'status': 500, 'msg': '删除SKU失败'}
+            print(f"删除SKU过程中发生错误: {str(e)}")
+            return {'status': 500, 'msg': f'删除SKU失败: {str(e)}'}
 
 sku_api.add_resource(SKUManage, '/sku/<int:id>/')
 

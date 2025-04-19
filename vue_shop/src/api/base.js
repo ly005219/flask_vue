@@ -3,7 +3,7 @@
  */
 const base = {
     baseUrl: 'http://127.0.0.1:5000',
-    login:"/user/login/",           // 登录地址 
+    login: "/user/login/",           // 登录地址
     test_response:"/user/test_login/", // 测试token是否有效地址
     get_menu:"/menu/menus/?type_=tree",     // 获取菜单地址,树的形式
     get_menu_list: '/menu/menus/',  // 获取菜单列表
@@ -28,6 +28,7 @@ const base = {
     update_attr:"/attribute/", //更新属性
     update_static_attr:"/static_attr/", //更新静态属性
     get_product_list:"/products/", //获取商品列表
+    get_all_products:"/get_all_products/", //获取所有商品
     del_product:"/product/", //删除商品
     update_product:"/product/", //更新商品
     upload_img:"/upload_img/", //上传图片地址

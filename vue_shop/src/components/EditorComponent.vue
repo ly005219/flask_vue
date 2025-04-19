@@ -29,7 +29,7 @@ import "tinymce/plugins/searchreplace"; //查询替换
 import "tinymce/plugins/pagebreak"; //分页
 import "tinymce/plugins/insertdatetime"; //时间插入
 
-import { reactive, ref, watch, onMounted } from "vue"
+import { reactive, ref, watch, onMounted, onBeforeUnmount } from "vue"
 
 const emit = defineEmits(["onDataEvent"])
 
@@ -52,8 +52,8 @@ const props = defineProps({
 const init = reactive({
     width: '100%',
     height: 300,
-    language_url: '/tinymce/langs/zh-Hans.js',
-    language: 'zh-Hans',
+    language_url: '/tinymce/langs/zh_CN.js', // 修正语言文件路径
+    language: 'zh_CN',                      // 修正语言代码
     // 皮肤：这里引入的是public下的资源文件
     skin_url: '/tinymce/skins/ui/oxide',
     // skin_url: 'tinymce/skins/ui/oxide-dark',//黑色系
@@ -66,28 +66,51 @@ const init = reactive({
     // 是否显示底部状态栏
     statusbar: true,
     // convert_urls: false,
+    // 解决ResizeObserver错误
+    resize: false, // 禁用编辑器的调整大小功能
     // 初始化完成
     init_instance_callback: (editor) => {
         console.log("初始化完成：", editor)
     },
-    // 此处为图片上传处理函数，这个直接用了base64的 图片形式上传图片，
-    // 如需ajax上传可参考 https://www.tiny.cloud/docs/configure/file-image-upload/#images_upload_handler
+    // 此处为图片上传处理函数
     images_upload_handler: (blobInfo, success, failure) => {
         const img = 'data:image/jpeg;base64,' + blobInfo.base64()
-        console.log("图片上传处理：", img)
         success(img)
     }
 })
 const textContent = ref("")
 
-watch(props.value, (newValue, oldValue) => {
+// 修复watch警告
+watch(() => props.value, (newValue) => {
     textContent.value = newValue
 })
-watch(textContent, (newValue, oldValue) => {
+
+watch(textContent, (newValue) => {
     emit("onDataEvent", newValue)
 })
+
+// ResizeObserver错误修复
+const onResizeObserverError = () => {
+    const resizeObserverError = window.ResizeObserver.prototype.disconnect
+    window.ResizeObserver.prototype.disconnect = function() {
+        setTimeout(() => {
+            resizeObserverError.call(this)
+        }, 0)
+    }
+}
+
 onMounted(() => {
     // 初始化 tinymce
     tinymce.init({})
+    // 添加ResizeObserver修复
+    onResizeObserverError()
+})
+
+// 添加销毁时的清理
+onBeforeUnmount(() => {
+    // 确保编辑器实例被正确清理
+    if (tinymce.activeEditor) {
+        tinymce.activeEditor.destroy()
+    }
 })
 </script>

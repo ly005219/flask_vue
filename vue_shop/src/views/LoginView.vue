@@ -35,15 +35,18 @@ import { Lock, User } from '@element-plus/icons-vue'
 import api from '@/api/index'//导入api接口
 import { useRouter } from 'vue-router';
 //导入路由对象
+import { ElMessage } from 'element-plus'
 
 //创建路由对象
 const router = useRouter()
 
+// 添加加载状态
+const loading = ref(false)
 
 //定义表单数据
 const user = reactive({
-    username: 'baizhan',
-    pwd: '12345674'
+    username: 'root',
+    pwd: '123456'
 
 })
 
@@ -72,10 +75,17 @@ const resetForm = (formRef) => {
 const submitForm = (formRef) => {
     formRef.validate((valid) => {
         if (valid) {
-            console.log('验证成功')
+            console.log('表单验证成功，开始登录请求')
+            
+            // 显示登录加载状态
+            loading.value = true
+            
             api.getLogin(user).then(res => {
+                loading.value = false
+                console.log('登录响应:', res)
+                
                 //根据响应的状态码进行不同的操作
-                if (res.data.status == 200) {
+                if (res.data.status === 200) {
                     //弹出框
                     ElMessage({
                         showClose: true,
@@ -83,39 +93,37 @@ const submitForm = (formRef) => {
                         type: 'success',
                     })
 
-                    console.log(res)
                     //记录登录的token值和用户名，会话存储
                     sessionStorage.setItem('token', res.data.data.token)
                     sessionStorage.setItem('username', user.username)
-                    //本地存储
-                    // localStorage.setItem('token', res.data.data.token)
 
-
-
-
-                    // console.log(res.data.msg)
                     //登录成功后跳转主页
                     router.push('/')
-
-
-                }else{
+                } else {
                     ElMessage.warning({
                         showClose: true,
-                        message: res.data.msg});
-                   
-                    
-                    
-                    // console.log(res.data.msg)
+                        message: res.data.msg || '登录失败，请重试'
+                    })
                 }
-             
+            }).catch(err => {
+                loading.value = false
+                console.error('登录失败:', err)
+                
+                let errorMsg = '网络连接错误，请检查网络或稍后重试'
+                if (err.response && err.response.data) {
+                    errorMsg = err.response.data.msg || '服务器返回错误，请联系管理员'
+                }
+                
+                ElMessage.error({
+                    showClose: true,
+                    message: errorMsg,
+                    duration: 5000
+                })
             })
-
         } else {
-            console.log('验证失败')
+            console.log('表单验证失败')
             return false
         }
-
-
     })
 }
 

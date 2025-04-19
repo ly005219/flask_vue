@@ -1,4 +1,4 @@
-from flask import request
+from flask import request, jsonify, make_response
 from flask_shop.role import role_api,role_bp
 from flask_restful import Resource
 from flask_shop import models
@@ -48,8 +48,6 @@ class Roles(Resource):
                     models.db.session.commit()
                     
                     return {'status':200,'msg':'角色添加成功'}
-
-
         except Exception as e:
             return {'status':500,'msg':'角色添加失败'}
         

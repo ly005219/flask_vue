@@ -1,8 +1,3 @@
-<!--
-  HomeView组件 - 主页视图
-  更新：添加了多级菜单支持
-  日期：2024年
--->
 <template>
     <div class="common-layout container">
         <el-container class="container">
@@ -62,12 +57,12 @@
                             <el-sub-menu 
                                 :index="String(index)"
                                 v-if="item && item.level === 1 && item.children && item.children.length > 0">
-                                <template #title>
-                                    <el-icon>
+                            <template #title>
+                                <el-icon>
                                         <component :is="iconMapping[item.id] || 'Menu'"></component>
-                                    </el-icon>
+                                </el-icon>
                                     <span>{{ item.name }}</span>
-                                </template>
+                            </template>
                                 
                                 <!-- 遍历二级菜单 -->
                                 <template v-for="subItem in item.children" :key="subItem.id">
@@ -84,9 +79,9 @@
                                             v-for="childItem in subItem.children" 
                                             :key="childItem.id"
                                             :index="childItem.path">
-                                            {{ childItem.name }}
-                                        </el-menu-item>
-                                    </el-sub-menu>
+                                {{ childItem.name }}
+                            </el-menu-item>
+                        </el-sub-menu>
                                     
                                     <!-- 如果二级菜单没有子项，则显示为菜单项 -->
                                     <el-menu-item 
@@ -847,7 +842,7 @@ const getUserInfo = () => {
                 // 判断头像路径是否已经包含完整URL
                 if (data.avatar.startsWith('http')) {
                     userInfo.avatar = data.avatar
-                } else {
+        } else {
                     userInfo.avatar = 'http://localhost:5000' + data.avatar
                 }
             } else {

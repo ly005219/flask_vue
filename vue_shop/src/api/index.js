@@ -25,8 +25,28 @@ const api = {
    * 登录
    */
   getLogin(params) {
-    return axios.post(base.baseUrl + base.login, params)
-   },
+    console.log('开始登录请求:', params.username);
+    return axios({
+      method: 'post',
+      url: base.baseUrl + base.login,
+      data: params,
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      withCredentials: true
+    }).catch(error => {
+      console.error('登录请求错误:', error);
+      if (error.response) {
+        console.error('错误响应数据:', error.response.data);
+        console.error('错误状态码:', error.response.status);
+      } else if (error.request) {
+        console.error('没有收到响应:', error.request);
+      } else {
+        console.error('请求配置错误:', error.message);
+      }
+      throw error; // 重新抛出错误，让调用者可以处理
+    });
+  },
   test_response(params) {
     return axios.get(base.baseUrl + base.test_response, params)
 
@@ -139,6 +159,9 @@ const api = {
     return axios.get(base.baseUrl + base.get_product_list, params)
 
    },
+   get_all_products() {
+     return axios.get(base.baseUrl + base.get_all_products)
+   },
    del_product(id) {
      return axios.delete(base.baseUrl + base.del_product + id + "/")
    },
@@ -188,7 +211,14 @@ const api = {
      return axios.put(base.baseUrl + base.update_sku + id + "/", params)
    },
    delete_sku(id) {
-     return axios.delete(base.baseUrl + base.delete_sku + id + "/")
+     return axios({
+       method: 'delete',
+       url: base.baseUrl + base.delete_sku + id + "/",
+       headers: {
+         'Content-Type': 'application/json',
+         'token': sessionStorage.getItem('token')
+       }
+     })
    },
    
    // 上传用户头像

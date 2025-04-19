@@ -317,6 +317,9 @@ class SKU(db.Model):
     status = db.Column(db.Integer, default=1)
     create_time = db.Column(db.DateTime, default=datetime.now)
     update_time = db.Column(db.DateTime, default=datetime.now, onupdate=datetime.now)
+    
+    # 添加与StockLog的关系，设置级联删除
+    stock_logs = db.relationship('StockLog', backref='sku', cascade='all, delete-orphan')
 
     def to_dict(self):
         return {
