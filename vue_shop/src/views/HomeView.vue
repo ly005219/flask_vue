@@ -463,15 +463,15 @@ const handleCommand = (command) => {
 
 // 对话框打开时的处理函数
 const onDialogOpen = () => {
-    console.log('高级头像编辑对话框已打开')
+    // console.log('高级头像编辑对话框已打开')
     
     // 如果已经有选择的图片，在对话框显示后重新初始化裁剪器
     if (advancedAvatarFile.value) {
-        console.log('对话框打开时已有图片，即将初始化裁剪器')
+        // console.log('对话框打开时已有图片，即将初始化裁剪器')
         // 等待DOM完全渲染
         nextTick(() => {
             setTimeout(() => {
-                console.log('延迟初始化裁剪器')
+                // console.log('延迟初始化裁剪器')
                 initCropper()
             }, 300) // 增加延迟时间，确保DOM已完全渲染
         })
@@ -532,7 +532,7 @@ const uploadAvatar = async () => {
 
 // 高级头像编辑处理函数
 const handleAdvancedAvatarChange = (file) => {
-    console.log('文件选择事件触发', file)
+    // console.log('文件选择事件触发', file)
     
     const isImage = file.raw.type.startsWith('image/')
     const isLt5M = file.raw.size / 1024 / 1024 < 5
@@ -546,20 +546,20 @@ const handleAdvancedAvatarChange = (file) => {
         return
     }
     
-    console.log('文件检查通过，准备设置头像文件')
+    // console.log('文件检查通过，准备设置头像文件')
     advancedAvatarFile.value = file.raw
-    console.log('已设置advancedAvatarFile', advancedAvatarFile.value)
+    // console.log('已设置advancedAvatarFile', advancedAvatarFile.value)
     
     // 创建URL
     advancedImageUrl.value = URL.createObjectURL(file.raw)
-    console.log('已创建图片URL', advancedImageUrl.value)
+    // console.log('已创建图片URL', advancedImageUrl.value)
     
     // 等待图像加载完成后初始化显示
-    console.log('等待nextTick初始化图像显示')
+    // console.log('等待nextTick初始化图像显示')
     nextTick(() => {
-        console.log('nextTick回调执行')
+        // console.log('nextTick回调执行')
         setTimeout(() => {
-            console.log('延迟300ms后初始化图像显示')
+            // console.log('延迟300ms后初始化图像显示')
             // 使用正确的初始化函数
             initCropperInstance()
             
@@ -571,10 +571,10 @@ const handleAdvancedAvatarChange = (file) => {
 
 // 初始化Cropper
 const initCropper = () => {
-    console.log('开始初始化Cropper')
-    console.log('cropperImage元素:', cropperImage.value)
-    console.log('advancedAvatarFile:', advancedAvatarFile.value)
-    console.log('advancedImageUrl:', advancedImageUrl.value)
+    // console.log('开始初始化Cropper')
+    // console.log('cropperImage元素:', cropperImage.value)
+    // console.log('advancedAvatarFile:', advancedAvatarFile.value)
+    // console.log('advancedImageUrl:', advancedImageUrl.value)
     
     // 检查图像尺寸
     if (cropperImage.value) {
@@ -587,13 +587,13 @@ const initCropper = () => {
             offsetWidth: img.offsetWidth || 0,
             offsetHeight: img.offsetHeight || 0
         }
-        console.log('图像尺寸:', imageSize.value)
+        // console.log('图像尺寸:', imageSize.value)
         
         // 检查图像是否已加载
         if (!img.complete) {
-            console.log('图像尚未完全加载，添加加载事件监听器')
+            // console.log('图像尚未完全加载，添加加载事件监听器')
             img.onload = () => {
-                console.log('图像已加载完成，重新获取尺寸')
+                // console.log('图像已加载完成，重新获取尺寸')
                 imageSize.value = {
                     naturalWidth: img.naturalWidth || 0,
                     naturalHeight: img.naturalHeight || 0,
@@ -602,7 +602,7 @@ const initCropper = () => {
                     offsetWidth: img.offsetWidth || 0,
                     offsetHeight: img.offsetHeight || 0
                 }
-                console.log('图像加载后尺寸:', imageSize.value)
+                // console.log('图像加载后尺寸:', imageSize.value)
                 // 图像加载完成后再初始化Cropper
                 initCropperInstance()
             }
@@ -616,7 +616,7 @@ const initCropper = () => {
 // 实际初始化Cropper实例的函数
 const initCropperInstance = () => {
     // 简单显示图像，不初始化裁剪器
-    console.log('初始化图像显示')
+    // console.log('初始化图像显示')
     if (cropperImage.value) {
         cropperImage.value.style.display = 'block';
         cropperImage.value.style.maxWidth = '100%';
@@ -768,23 +768,23 @@ const loadUserMenu = async () => {
     try {
         // 先尝试获取用户权限菜单
         const permRes = await api.getUserPermissions()
-        console.log('获取用户权限菜单响应:', permRes)
+        // console.log('获取用户权限菜单响应:', permRes)
         
         if (permRes?.data?.status === 200 && permRes.data.data && permRes.data.data.menus && permRes.data.data.menus.length > 0) {
             // 如果成功获取用户权限菜单
             menuList.value = permRes.data.data.menus
-            console.log('已加载用户权限菜单:', menuList.value)
+            // console.log('已加载用户权限菜单:', menuList.value)
             
             // 打印菜单结构，帮助调试多级菜单
-            console.log('菜单结构详情:')
+            // console.log('菜单结构详情:')
             menuList.value.forEach((item, index) => {
-                console.log(`一级菜单${index+1}:`, item.name, '(ID:', item.id, ')')
+                // console.log(`一级菜单${index+1}:`, item.name, '(ID:', item.id, ')')
                 if (item.children && item.children.length > 0) {
                     item.children.forEach((subItem, subIndex) => {
-                        console.log(`--二级菜单${subIndex+1}:`, subItem.name, '(ID:', subItem.id, ')')
+                        // console.log(`--二级菜单${subIndex+1}:`, subItem.name, '(ID:', subItem.id, ')')
                         if (subItem.children && subItem.children.length > 0) {
                             subItem.children.forEach((childItem, childIndex) => {
-                                console.log(`----三级菜单${childIndex+1}:`, childItem.name, '(ID:', childItem.id, ')')
+                                // console.log(`----三级菜单${childIndex+1}:`, childItem.name, '(ID:', childItem.id, ')')
                             })
                         }
                     })
@@ -793,22 +793,22 @@ const loadUserMenu = async () => {
         } else {
             // 如果获取用户权限菜单失败，尝试获取所有菜单
             const menuRes = await api.get_menu_list()
-            console.log('获取所有菜单响应:', menuRes)
+            // console.log('获取所有菜单响应:', menuRes)
             
             if (menuRes?.data?.status === 200) {
                 menuList.value = menuRes.data.data || []
-                console.log('已加载所有菜单:', menuList.value)
+                // console.log('已加载所有菜单:', menuList.value)
                 
                 // 打印菜单结构
-                console.log('菜单结构详情:')
+                // console.log('菜单结构详情:')
                 menuList.value.forEach((item, index) => {
-                    console.log(`一级菜单${index+1}:`, item.name, '(ID:', item.id, ')')
+                    // console.log(`一级菜单${index+1}:`, item.name, '(ID:', item.id, ')')
                     if (item.children && item.children.length > 0) {
                         item.children.forEach((subItem, subIndex) => {
-                            console.log(`--二级菜单${subIndex+1}:`, subItem.name, '(ID:', subItem.id, ')')
+                            // console.log(`--二级菜单${subIndex+1}:`, subItem.name, '(ID:', subItem.id, ')')
                             if (subItem.children && subItem.children.length > 0) {
                                 subItem.children.forEach((childItem, childIndex) => {
-                                    console.log(`----三级菜单${childIndex+1}:`, childItem.name, '(ID:', childItem.id, ')')
+                                    // console.log(`----三级菜单${childIndex+1}:`, childItem.name, '(ID:', childItem.id, ')')
                                 })
                             }
                         })
@@ -827,7 +827,7 @@ const loadUserMenu = async () => {
 // 获取用户信息
 const getUserInfo = () => {
     api.get_user_info().then(res => {
-        console.log('用户信息响应:', res)
+        // console.log('用户信息响应:', res)
         if (res?.data?.status === 200) {
             // 更新用户信息
             const data = res.data.data
@@ -849,12 +849,12 @@ const getUserInfo = () => {
                 userInfo.avatar = 'http://localhost:5000/static/avatar/init.png'
             }
             
-            console.log('用户信息已更新:', userInfo)
+            // console.log('用户信息已更新:', userInfo)
         } else {
-            console.error('获取用户信息失败:', res?.data?.msg)
+            // console.error('获取用户信息失败:', res?.data?.msg)
         }
     }).catch(err => {
-        console.error('获取用户信息错误:', err)
+        // console.error('获取用户信息错误:', err)
     })
 }
 
@@ -875,7 +875,7 @@ onUnmounted(() => {
 
 // 调试函数
 const debugInitCropper = () => {
-    console.log('开始调试初始化图像显示')
+    // console.log('开始调试初始化图像显示')
     
     // 显示图像并更新预览
     if (cropperImage.value && advancedImageUrl.value) {
@@ -886,13 +886,13 @@ const debugInitCropper = () => {
         // 更新预览
         updateCropper();
     } else {
-        console.warn('无法初始化图像，图像元素或URL不存在')
+        // console.warn('无法初始化图像，图像元素或URL不存在')
     }
 }
 
 // debugForceRerender 函数修复 - 移除Cropper API依赖
 const debugForceRerender = () => {
-    console.log('开始强制重新渲染')
+    // console.log('开始强制重新渲染')
     
     // 强制重新创建图像元素
     if (advancedAvatarFile.value) {
@@ -906,14 +906,14 @@ const debugForceRerender = () => {
         
         // 重新创建图像URL
         advancedImageUrl.value = URL.createObjectURL(advancedAvatarFile.value)
-        console.log('重新创建的URL:', advancedImageUrl.value)
+        // console.log('重新创建的URL:', advancedImageUrl.value)
         
         // 等待下一个渲染周期
         nextTick(() => {
             // 设置一个更长的延迟，确保图像已加载
             setTimeout(() => {
                 if (cropperImage.value) {
-                    console.log('强制重新渲染后的图像元素:', cropperImage.value)
+                    // console.log('强制重新渲染后的图像元素:', cropperImage.value)
                     
                     // 检查图像尺寸
                     const img = cropperImage.value;
@@ -925,17 +925,17 @@ const debugForceRerender = () => {
                         offsetWidth: img.offsetWidth || 0,
                         offsetHeight: img.offsetHeight || 0
                     }
-                    console.log('强制重新渲染后的图像尺寸:', imageSize.value)
+                    // console.log('强制重新渲染后的图像尺寸:', imageSize.value)
                     
                     // 显示图像
                     initCropperInstance()
                 } else {
-                    console.error('强制重新渲染后仍找不到图像元素')
+                    // console.error('强制重新渲染后仍找不到图像元素')
                 }
             }, 500)
         })
     } else {
-        console.warn('没有选择文件，无法强制重新渲染')
+        // console.warn('没有选择文件，无法强制重新渲染')
     }
 }
 

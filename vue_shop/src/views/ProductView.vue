@@ -24,7 +24,7 @@
         <!-- 筛选条件 -->
         <el-row :gutter="20" class="mb-4">
             <el-col :span="8">
-                <el-select v-model="product_data.sortBy" placeholder="排序方式" @change="getProductList">
+                <el-select v-model="product_data.sortBy" placeholder="排序方式" @change="getProductList" teleported popper-append-to-body>
                     <el-option label="默认排序" value=""></el-option>
                     <el-option label="价格从低到高" value="price_asc"></el-option>
                     <el-option label="价格从高到低" value="price_desc"></el-option>
@@ -37,7 +37,7 @@
                 <el-input-number v-model="product_data.maxPrice" placeholder="最高价格" :min="0" @change="getProductList"></el-input-number>
             </el-col>
             <el-col :span="8">
-                <el-select v-model="product_data.state" placeholder="商品状态" @change="getProductList">
+                <el-select v-model="product_data.state" placeholder="商品状态" @change="getProductList" teleported popper-append-to-body>
                     <el-option label="全部" value=""></el-option>
                     <el-option label="上架" :value="1"></el-option>
                     <el-option label="下架" :value="-1"></el-option>
@@ -103,7 +103,7 @@
                     <el-input v-model="productEditForm.number" clearable></el-input>
                 </el-form-item>
                 <el-form-item label="商品状态" prop="state">
-                    <el-select v-model="productEditForm.state" placeholder="请选择商品状态">
+                    <el-select v-model="productEditForm.state" placeholder="请选择商品状态" teleported popper-append-to-body>
                         <el-option label="上架" :value="1"></el-option>
                         <el-option label="下架" :value="-1"></el-option>
                         <el-option label="预售" :value="0"></el-option>
@@ -138,7 +138,7 @@
 
 <script setup>
 import { ArrowRight, Search, CirclePlus } from '@element-plus/icons-vue'
-import { ref, reactive, onMounted } from 'vue'
+import { ref, reactive, onMounted, nextTick } from 'vue'
 import api from '@/api/index'
 import { useRouter } from 'vue-router';
 import { ElMessage, ElMessageBox } from 'element-plus'
@@ -160,14 +160,16 @@ const product_data = reactive({
 //const lastQueryName = ref('') // 用于存储上一个 queryName 的值
 
 onMounted(() => {
-    getCategories()
-    getProductList()
+    nextTick(() => {
+        getCategories()
+        getProductList()
+    })
 })
 
 // 获取分类列表
 const getCategories = async () => {
     try {
-        const res = await api.get_categories()
+        const res = await api.get_category_list(0)
         if (res.data.status === 200) {
             categories.value = res.data.data
         }
@@ -206,10 +208,10 @@ const getProductList = async () => {
         params.page = product_data.currentPage
         params.per_page = product_data.pageSize
 
-        console.log('发送请求参数:', params)  // 调试日志
+        // console.log('发送请求参数:', params)  // 调试日志
         
         const res = await api.get_product_list({params})
-        console.log('接收到响应:', res.data)  // 调试日志
+        // console.log('接收到响应:', res.data)  // 调试日志
         
         if (res.data.status === 200) {
             product_data.productList = res.data.data.items || []

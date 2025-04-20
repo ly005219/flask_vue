@@ -68,6 +68,7 @@
         show-checkbox
         node-key="id"
         default-expand-all
+        check-strictly
       />
       <template #footer>
         <span class="dialog-footer">
@@ -80,11 +81,14 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted, nextTick } from 'vue'
+import { ref, reactive, onMounted, nextTick, getCurrentInstance } from 'vue'
 import { ArrowRight } from '@element-plus/icons-vue'
 import { Edit, Setting, Delete } from '@element-plus/icons-vue'
-import { ElMessage, ElMessageBox } from 'element-plus'
+import { ElMessageBox } from 'element-plus'
 import api from '@/api/index'
+
+const { proxy } = getCurrentInstance();
+const message = proxy.$message || console.log; // 使用安全的消息方法或降级为console.log
 
 const tableData = reactive({
   rolelist: []
@@ -122,7 +126,6 @@ const get_roles_list = () => {
 
 const getMenuList = () => {
   api.get_menu({type_: 'tree'}).then(res => {
-    console.log('菜单列表响应:', res)
     if (res.data.status === 200) {
       if (Array.isArray(res.data.data)) {
         menuList.splice(0, menuList.length, ...res.data.data)
@@ -131,14 +134,14 @@ const getMenuList = () => {
         menuList.splice(0, menuList.length)
       }
     } else {
-      ElMessage.warning({
+      message.warning({
         showClose: true,
         message: res.data.msg || '获取菜单列表失败'
       })
     }
   }).catch(err => {
     console.error('获取菜单列表错误:', err)
-    ElMessage.warning({
+    message.warning({
       showClose: true,
       message: '获取菜单列表失败'
     })
@@ -161,7 +164,7 @@ const showEditDialog = (row) => {
 
 const submitRole = () => {
   if (!editForm.name || !editForm.desc) {
-    return ElMessage.warning('请填写完整信息')
+    return message.warning('请填写完整信息')
   }
 
   const request = editForm.id
@@ -170,15 +173,14 @@ const submitRole = () => {
 
   request.then(res => {
     if (res.data.status === 200) {
-      ElMessage({
+      message.success({
         showClose: true,
         message: res.data.msg,
-        type: 'success'
       })
       editDialogVisible.value = false
       get_roles_list()
     } else {
-      ElMessage.warning({
+      message.warning({
         showClose: true,
         message: res.data.msg
       })
@@ -194,22 +196,20 @@ const handleDelete = (row) => {
   }).then(() => {
     api.del_role(row.id).then(res => {
       if (res.data.status === 200) {
-        ElMessage({
+        message.success({
           showClose: true,
           message: res.data.msg,
-          type: 'success'
         })
         get_roles_list()
       } else {
-        ElMessage.warning({
+        message.warning({
           showClose: true,
           message: res.data.msg
         })
       }
     })
   }).catch(() => {
-    ElMessage({
-      type: 'info',
+    message.info({
       message: '已取消删除'
     })
   })
@@ -220,24 +220,26 @@ const KeyList = ref([])
 
 // 分配权限
 const handlePermission = (row) => {
-  console.log('当前角色数据:', row)
   menuDialogVisible.value = true
   rid.value = row.id
   KeyList.value = [] // 清空之前的选中状态
 
+  // 仅添加指定的菜单ID，不做额外处理
   if (row.menus && Array.isArray(row.menus) && row.menus.length > 0) {
+    // 添加一级菜单
     row.menus.forEach(menu => {
       KeyList.value.push(menu.id)
       
+      // 添加已分配的二级菜单
       if (menu.children && Array.isArray(menu.children)) {
         menu.children.forEach(subMenu => {
-          KeyList.value.push(subMenu.id)
+          if (subMenu.id) {
+            KeyList.value.push(subMenu.id)
+          }
         })
       }
     })
   }
-
-  console.log('选中的菜单ID:', KeyList.value)
 
   // 等待DOM更新后设置选中状态
   nextTick(() => {
@@ -250,41 +252,38 @@ const handlePermission = (row) => {
 // 提交权限设置
 const submitPermission = () => {
   if (!treeRef.value) {
-    ElMessage.warning('菜单树未加载完成')
+    message.warning('菜单树未加载完成')
     return
   }
 
-  // 获取选中和半选中的节点
+  // 仅获取明确选中的节点，忽略半选中状态
   const checkedKeys = treeRef.value.getCheckedKeys() || []
-  const halfCheckedKeys = treeRef.value.getHalfCheckedKeys() || []
   
-  // 合并所有需要的菜单ID
-  const menuIds = [...new Set([...checkedKeys, ...halfCheckedKeys])].join(',')
-  console.log('提交的菜单ID:', menuIds)
+  // 将选中的菜单ID转为字符串
+  const menuIds = checkedKeys.join(',')
 
   if (!menuIds) {
-    ElMessage.warning('请选择要分配的权限')
+    message.warning('请选择要分配的权限')
     return
   }
 
   api.set_menu(rid.value, { menu_id: menuIds }).then(res => {
     if (res.data.status === 200) {
-      ElMessage({
+      message.success({
         showClose: true,
         message: res.data.msg,
-        type: 'success'
       })
       menuDialogVisible.value = false
       get_roles_list() // 刷新角色列表
     } else {
-      ElMessage.warning({
+      message.warning({
         showClose: true,
         message: res.data.msg || '分配权限失败'
       })
     }
   }).catch(err => {
     console.error('分配权限错误:', err)
-    ElMessage.warning({
+    message.warning({
       showClose: true,
       message: '分配权限失败，请重试'
     })

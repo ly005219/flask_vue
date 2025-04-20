@@ -91,7 +91,7 @@ onMounted(() => {
 // 获取用户权限
 const getUserPermissions = () => {
     api.getUserPermissions().then(res => {
-        console.log('用户权限数据:', res)
+        // console.log('用户权限数据:', res)
         if (res.data.status === 200) {
             userRole.value = res.data.data.role
             userMenus.value = res.data.data.menus

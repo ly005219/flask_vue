@@ -70,7 +70,7 @@ const init = reactive({
     resize: false, // 禁用编辑器的调整大小功能
     // 初始化完成
     init_instance_callback: (editor) => {
-        console.log("初始化完成：", editor)
+        // console.log("初始化完成：", editor)
     },
     // 此处为图片上传处理函数
     images_upload_handler: (blobInfo, success, failure) => {

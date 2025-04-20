@@ -54,7 +54,7 @@
     <el-dialog :title="dialogTitle" v-model="dialogVisible" width="50%">
       <el-form :model="skuForm" ref="skuFormRef" :rules="skuRules" label-width="80px">
         <el-form-item label="商品" prop="product_id">
-          <el-select v-model="skuForm.product_id" placeholder="请选择商品">
+          <el-select v-model.number="skuForm.product_id" placeholder="请选择商品" teleported popper-append-to-body>
             <el-option
               v-for="item in productList"
               :key="item.id"
@@ -112,7 +112,7 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted, h } from 'vue'
+import { ref, reactive, onMounted, h, nextTick } from 'vue'
 import { ArrowRight } from '@element-plus/icons-vue'
 import { Edit, Delete } from '@element-plus/icons-vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
@@ -136,20 +136,21 @@ const skuForm = reactive({
 })
 
 const skuRules = {
-  product_id: [{ required: true, message: '请选择商品', trigger: 'change' }],
+  product_id: [{ required: true, message: '请选择商品', trigger: 'blur' }],
   price: [{ required: true, message: '请输入价格', trigger: 'blur' }],
   stock: [{ required: true, message: '请输入库存', trigger: 'blur' }]
 }
 
 onMounted(() => {
-  getSKUList()
-  getProductList()
+  nextTick(() => {
+    getSKUList()
+    getProductList()
+  })
 })
 
 const getSKUList = () => {
   api.get_sku_list()
     .then(res => {
-      console.log('SKU列表响应:', res)
       if (res?.data?.status === 200) {
         skuList.value = res.data.data.data || []
       } else {
@@ -181,8 +182,6 @@ const getSKUList = () => {
 //获取所有商品
 const getProductList = () => {
   api.get_all_products().then(res => {
-    console.log('获取所有商品',res.data.data)
-    //遍历res.data.data，然后获取state：1的商品 
     productList.value = res.data.data.filter(item => item.state === 1) || []
   })
 }
@@ -191,6 +190,11 @@ const getProductList = () => {
 const showAddDialog = () => {
   dialogTitle.value = '添加SKU'
   dialogVisible.value = true
+  // 重置表单所有字段
+  skuForm.product_id = null
+  skuForm.price = ''
+  skuForm.stock = ''
+  skuForm.specifications = {}
   specifications.value = []
 }
 
@@ -236,7 +240,7 @@ const submitSKU = () => {
 
   // 准备提交的数据
   const submitData = {
-    product_id: parseInt(skuForm.product_id),
+    product_id: skuForm.product_id,
     specifications: specs,
     price: parseFloat(skuForm.price),
     stock: parseInt(skuForm.stock)
@@ -316,11 +320,11 @@ const confirmDelete = () => {
   if (!skuToDelete.value) return
   
   isDeleting.value = true
-  console.log('开始删除SKU请求:', skuToDelete.value.id)
+  // console.log('开始删除SKU请求:', skuToDelete.value.id)
   
   api.delete_sku(skuToDelete.value.id).then(res => {
     isDeleting.value = false
-    console.log('删除SKU响应:', res)
+    // console.log('删除SKU响应:', res)
     if (res.data.status === 200) {
       ElMessage({
         showClose: true,

@@ -98,7 +98,7 @@
             </el-form-item>
 
             <el-form-item label="角色" :label-width="formLabelWidth" prop="role_id">
-                <el-select v-model="user_form.role_id" placeholder="请选择角色">
+                <el-select v-model="user_form.role_id" placeholder="请选择角色" teleported popper-append-to-body>
                     <el-option :label="r.desc" :value="r.id" v-for="r in roles" :key="r.id"></el-option>                 
                 </el-select>
             </el-form-item>
@@ -136,7 +136,7 @@
             </el-form-item>
 
             <el-form-item label="角色" :label-width="formLabelWidth" prop="role_id">
-                <el-select v-model="edit_form.role_id" placeholder="请选择角色">
+                <el-select v-model="edit_form.role_id" placeholder="请选择角色" teleported popper-append-to-body>
 
                     <el-option :label="r.desc" :value="r.id" v-for="r in roles" :key="r.id"></el-option>
                  
@@ -165,7 +165,7 @@
 //面包屑的图标,搜索按钮的图标
 import { ArrowRight, Search , CirclePlus } from '@element-plus/icons-vue'
 import api from '@/api/index'//导入api接口
-import { onMounted , reactive, ref} from 'vue'
+import { onMounted , reactive, ref, nextTick} from 'vue'
 
 
 
@@ -300,9 +300,11 @@ let roles=ref([])//角色列表
 
 //定义一个onMounted钩子函数
 onMounted(() => {
-
-    get_user_list(),
-    get_roles_list()
+    // 使用nextTick确保DOM已准备好
+    nextTick(() => {
+        get_user_list()
+        get_roles_list()
+    })
 })
 
 // const get_user_list = () => {
@@ -332,21 +334,23 @@ const get_user_list = () => {
         'username': user_data.queryName
     };
 
-    console.log(params);
+    // console.log(params);
 
     api.get_user({ params })
         .then(res => {
-            console.log('下面是用户列表数据')
-            console.log(res);
+            // console.log('下面是用户列表数据')
+            // console.log(res);
             if (res && res.data && res.data.data) {
                 user_data.tableData = res.data.data.data;
                 user_data.total = res.data.data.total;
             } else {
                 console.error('响应数据格式不正确：', res);
+                ElMessage.error('获取用户列表失败');
             }
         })
         .catch(error => {
             console.error('请求失败，错误信息：', error);
+            ElMessage.error('网络请求失败，请稍后重试');
         });
 }
 
@@ -374,7 +378,7 @@ const handleCurrentChange = (val) => { //这个是改变当前页的函数
 
 //获取用户列表
 const searchUser = () => {
-    console.log(user_data.queryName)
+    // console.log(user_data.queryName)
    
     //初始化页码
     user_data.pageNum = 1
@@ -396,7 +400,7 @@ const addFormRest = () => {
 const addUser = (formRef) => {
     formRef.validate((valid) => {
         if (valid) {
-            console.log('验证成功')
+            // console.log('验证成功')
             api.register_user(user_form).then(res => {
                 //根据响应的状态码进行不同的操作
                 if (res.data.status == 200) {
@@ -407,7 +411,7 @@ const addUser = (formRef) => {
                         type: 'success',
                     })
 
-                    console.log(res)
+                    // console.log(res)
                     //重置表单
                     addFormRest()
                     //刷新页面，添加数据后自动刷新不用点击搜索之后在触发这个刷新的get_user_list()函数
@@ -422,13 +426,13 @@ const addUser = (formRef) => {
                    
                     
                     
-                    console.log(res.data.msg)
+                    // console.log(res.data.msg)
                 }
              
             })
 
         } else {
-            console.log('验证失败')
+            // console.log('验证失败')
             
           
             return false
@@ -441,7 +445,7 @@ const addUser = (formRef) => {
 
 //编辑用户弹窗相关数据,编辑
 const handleEdit = (index, row) => {
-    console.log(index, row)
+    // console.log(index, row)
     //打开编辑弹窗
     editDialogVisible.value = true
 
@@ -482,7 +486,7 @@ const editUser =() => {
                 type: 'success',
             })
 
-            console.log(res)
+            // console.log(res)
            //关闭编辑弹窗
             editDialogVisible.value = false
             //刷新页面，添加数据后自动刷新不用点击搜索之后在触发这个刷新的get_user_list()函数
@@ -501,7 +505,7 @@ const editUser =() => {
 
 //删除用户
 const handleDelete = (index, row) => {
-    console.log(index, row)
+    // console.log(index, row)
     //弹出框
     ElMessageBox.confirm('确认删除'+row.username+'用户吗？', '提示', {
         confirmButtonText: '确定',
@@ -517,28 +521,30 @@ const handleDelete = (index, row) => {
                         type: 'success',
                     })
 
-                    console.log(res)
+                    // console.log(res)
                     //刷新页面，添加数据后自动刷新不用点击搜索之后在触发这个刷新的get_user_list()函数
-                    get_user_list()
-
-                    } else {
-                        ElMessage.warning({
-                            showClose: true,
-                            message: res.data.msg});
-                        // console.log(res.data.msg)
-                    }
-            })
+                    // 重新获取第一页数据
+                    user_data.pageNum = 1;
+                    get_user_list();
+                } else {
+                    ElMessage.warning({
+                        showClose: true,
+                        message: res.data.msg
+                    });
+                }
+            }).catch(error => {
+                console.error('删除用户请求失败:', error);
+                ElMessage.error('删除用户失败，请稍后重试');
+            });
         }).catch(() => {
-            ElMessage({
-                type: 'info',
-                message: '已取消删除'
-            })
-        })
+            // 用户取消删除操作
+            ElMessage.info('已取消删除');
+        });
 }
 
 //重置用户密码
 const handleReset = (index, row) => {
-    console.log(index, row)
+    // console.log(index, row)
     //弹出框
     ElMessageBox.confirm('确认重置'+row.username+'用户密码吗？', '提示', {
         confirmButtonText: '确定',
@@ -554,7 +560,7 @@ const handleReset = (index, row) => {
                         type: 'success',
                     })
 
-                    console.log(res)
+                    // console.log(res)
                     //刷新页面，添加数据后自动刷新不用点击搜索之后在触发这个刷新的get_user_list()函数
                     get_user_list()
 
@@ -577,7 +583,7 @@ const handleReset = (index, row) => {
 const get_roles_list = () => {
 
     api.get_roles_list().then(res => {
-        console.log(res)
+        // console.log(res)
         // tableData.rolelist = res.data.roles_data
         roles.value= res.data.roles_data
        

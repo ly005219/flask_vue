@@ -75,14 +75,14 @@ const resetForm = (formRef) => {
 const submitForm = (formRef) => {
     formRef.validate((valid) => {
         if (valid) {
-            console.log('表单验证成功，开始登录请求')
+            // console.log('表单验证成功，开始登录请求')
             
             // 显示登录加载状态
             loading.value = true
             
             api.getLogin(user).then(res => {
                 loading.value = false
-                console.log('登录响应:', res)
+                // console.log('登录响应:', res)
                 
                 //根据响应的状态码进行不同的操作
                 if (res.data.status === 200) {
@@ -121,7 +121,7 @@ const submitForm = (formRef) => {
                 })
             })
         } else {
-            console.log('表单验证失败')
+            // console.log('表单验证失败')
             return false
         }
     })

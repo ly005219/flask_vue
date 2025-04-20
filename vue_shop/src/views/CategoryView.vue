@@ -122,7 +122,7 @@ const props = {
 }
 const handleChange = (value) => {
     
-      console.log(value)
+      //console.log(value)
     if (value) {
         if (value.length == 1) {
             addForm.parent_id = value[0]
@@ -135,7 +135,7 @@ const handleChange = (value) => {
         addForm.parent_id = 0
         addForm.level = 1
     }
-    console.log(addForm)
+    //console.log(addForm)
 }
 
 const options = reactive({
@@ -153,7 +153,7 @@ onMounted(() => {
 
 const get_category = () => {
     api.get_category_list(3).then(res => {
-        console.log(res)
+        //console.log(res)
         tableData.data = res.data.data
 
     })
@@ -165,7 +165,7 @@ const addCategoryDialog = () => {
 //获取options数据
 const get_options = () => {
     api.get_category_list(2).then(res => {
-        console.log(res)
+        //console.log(res)
         options.data = res.data.data
     })
 }
@@ -173,7 +173,7 @@ const get_options = () => {
 const addcategory = () => {
     // 调用 API 接口添加分类
     api.add_category(addForm).then(res => {
-        console.log(res);
+        //console.log(res);
         
         // 检查响应的状态
         if (res.data.status === 200) {
@@ -231,7 +231,7 @@ const handleDelete = (index,row) => {
                 type: 'success',
                 message: '删除' + name + '的成功',
             })
-            console.log(res)
+            //console.log(res)
         //删除之后，刷新页面，就不再显示删除之后的数据了
         get_category()
 

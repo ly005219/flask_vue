@@ -5,25 +5,25 @@ import router from "@/router/index.js";
 const errorHandle = (status,info) =>{
   switch(status){
     case 400:
-      console.log("语义错误");
+      // console.log("语义错误");
       break;
     case 401:
-      console.log("服务器认证失败");
+      // console.log("服务器认证失败");
       break;
     case 403:
-      console.log("服务器请求拒绝执行");
+      // console.log("服务器请求拒绝执行");
       break;
     case 404:
-      console.log("请检查网路请求地址");
+      // console.log("请检查网路请求地址");
       break;
     case 500:
-      console.log("服务器发生意外");
+      // console.log("服务器发生意外");
       break;
     case 502:
-      console.log("服务器无响应");
+      // console.log("服务器无响应");
       break;
     default:
-      console.log(info);
+      // console.log(info);
       break;
    }
 }
@@ -75,7 +75,7 @@ instance.interceptors.response.use(
     if(response){
       errorHandle(response.status,response.info)
      }else{
-      console.log("网络请求被中断了");
+      // console.log("网络请求被中断了");
      }
    }
 )

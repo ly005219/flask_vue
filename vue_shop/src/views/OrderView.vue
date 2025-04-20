@@ -119,9 +119,7 @@ const getOrderList = () => {
 
     api.get_order_list({ params }).then(res => {
 
-        console.log(res.data.orders)
         //打印这个name
-        console.log(order_data.queryName)
         order_data.orderList = res.data.orders
 
     })
@@ -142,9 +140,7 @@ const showExpress = (id) => {
     expressDialogVisible.value = true
     order_id = id//这个id就是订单id
     api.get_express_list(order_id).then(res => {
-        console.log(res.data)
         express_info.data = res.data.expresses
-        console.log(express_info.data)
     })
 
 }

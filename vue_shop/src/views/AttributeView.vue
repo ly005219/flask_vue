@@ -434,7 +434,7 @@ const closeTag = (id,valueList,index) => {
         "value": valueList.join(','),
         }
     api.updata_attr_value(id,params).then(res => {
-        console.log(res)
+        //console.log(res)
         ElMessage({
         type: 'success',
         message: res.data.msg,

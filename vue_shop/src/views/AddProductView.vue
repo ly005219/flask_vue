@@ -55,7 +55,7 @@
                 <el-tab-pane label="商品动态属性" :name="2">
                     <el-form-item :label="d.name" v-for="d in attrData.dynamic" :key="d.id">
                         <el-checkbox-group v-model="d.value">
-                            <el-checkbox :label="v" name="type" v-for="(v,i) in d.value" :key="i" border></el-checkbox>
+                            <el-checkbox :value="v" name="type" v-for="(v,i) in d.value" :key="i" border></el-checkbox>
                         </el-checkbox-group>
                     </el-form-item>
                 </el-tab-pane>
@@ -182,7 +182,7 @@ const ChangeSelect = (value) => {
             addForm.cid_two = options.selectID[1]
             addForm.cid_three = options.selectID[2]
         }
-        console.log(addForm)
+        //console.log(addForm)
 
     }
 
@@ -197,7 +197,7 @@ onMounted(() => {
 //获取商品分类数据
 const get_category_list = () => {
     api.get_category_list(3).then(res => {
-        console.log(res.data)
+        //console.log(res.data)
         options.data = res.data.data
     })
 }
@@ -242,7 +242,7 @@ const get_attr = (selectKey, _type) => {
 }
 //上传图片成功的回调函数
 const handleSuccess = (res, file, fileList) => {
-    console.log(res)
+    //console.log(res)
     // console.log(file)
     // console.log(fileList)
     if (res.status === 200) {
@@ -288,7 +288,7 @@ const handlePreview = (file) => {
 
 //定义获取富文本编辑器数据的方法
 const getDataHandler = (data) => {
-    console.log(data)
+    //console.log(data)
     //把富文本编辑器的数据赋值给表单的content字段
     addForm.content = data
 }
@@ -300,10 +300,10 @@ const submitForm = () => {
     //将属性信息绑定到表单
     addForm.attrs_static=attrData.static
     addForm.attrs_dynamic=attrData.dynamic
-    console.log(addForm)
+    //console.log(addForm)
     //提交表单
     api.add_product(addForm).then(res => {
-        console.log(res)
+        //console.log(res)
         if (res.data.status === 200) {
             ElMessage({
                 'type': 'success',

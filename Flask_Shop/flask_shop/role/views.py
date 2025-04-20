@@ -156,23 +156,37 @@ def get_role_menu_list(role_id):
 def set_menu(role_id:int):
     """设置角色的菜单权限"""
     try:
-        role=models.Role.query.get(role_id)
-        #获取当前角色的菜单列表
-        menus_id=request.get_json().get('menu_id')
-        #清空当前角色的所有权限
-        role.menus=[]
-        #遍历菜单列表
-        menus_id=menus_id.split(',')
-        for mid in menus_id:
-            if mid:
-                #查找当前菜单信息
-                menu=models.Menu.query.get(int(mid))
-                role.menus.append(menu)
+        role = models.Role.query.get(role_id)
+        if not role:
+            return {'status': 404, 'msg': '角色不存在'}
             
-        #保存到数据库
+        # 获取菜单ID列表
+        menus_id = request.get_json().get('menu_id')
+        if not menus_id:
+            return {'status': 400, 'msg': '未提供菜单权限列表'}
+            
+        # 清空当前角色的所有权限
+        role.menus = []
+        
+        # 遍历菜单列表
+        menu_ids = menus_id.split(',')
+        for mid in menu_ids:
+            if mid and mid.strip():
+                try:
+                    # 查找当前菜单信息
+                    menu = models.Menu.query.get(int(mid))
+                    if menu:
+                        role.menus.append(menu)
+                except (ValueError, TypeError) as e:
+                    print(f"无效的菜单ID: {mid}, 错误: {str(e)}")
+                    continue
+            
+        # 保存到数据库
         models.db.session.commit()
         
-        return {'status':200,'msg':'角色分配菜单权限成功'}
+        return {'status': 200, 'msg': '角色分配菜单权限成功'}
 
     except Exception as e:
-        return {'status':500,'msg':'角色分配菜单权限失败'}
+        models.db.session.rollback()
+        print(f"角色分配菜单权限失败: {str(e)}")
+        return {'status': 500, 'msg': f'角色分配菜单权限失败: {str(e)}'}

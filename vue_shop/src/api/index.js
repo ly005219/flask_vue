@@ -25,7 +25,7 @@ const api = {
    * 登录
    */
   getLogin(params) {
-    console.log('开始登录请求:', params.username);
+    // console.log('开始登录请求:', params.username);
     return axios({
       method: 'post',
       url: base.baseUrl + base.login,
@@ -68,9 +68,15 @@ const api = {
     //  }else{
     //    return axios.get(base.baseUrl + base.get_users, params)
     //  }
-    return axios.get(base.baseUrl + base.get_users, params)
-    
-
+    return axios({
+      method: 'get',
+      url: base.baseUrl + base.get_users,
+      params: params.params, // 正确提取params中的params对象
+      headers: {
+        'Content-Type': 'application/json',
+        'token': sessionStorage.getItem('token')
+      }
+    })
    },
    register_user(params) {
      return axios.post(base.baseUrl + base.get_users, params)
