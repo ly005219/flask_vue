@@ -11,7 +11,7 @@
  Target Server Version : 80402 (8.4.2)
  File Encoding         : 65001
 
- Date: 17/04/2025 18:32:56
+ Date: 22/04/2025 12:37:18
 */
 
 SET NAMES utf8mb4;
@@ -39,7 +39,7 @@ CREATE TABLE `t_attributes`  (
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `category_id`(`category_id` ASC) USING BTREE,
   CONSTRAINT `t_attributes_ibfk_1` FOREIGN KEY (`category_id`) REFERENCES `t_categories` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 53 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 55 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for t_categories
@@ -53,7 +53,7 @@ CREATE TABLE `t_categories`  (
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `parent_id`(`parent_id` ASC) USING BTREE,
   CONSTRAINT `t_categories_ibfk_1` FOREIGN KEY (`parent_id`) REFERENCES `t_categories` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 162 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 163 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for t_express
@@ -99,8 +99,8 @@ CREATE TABLE `t_order_details`  (
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `order_id`(`order_id` ASC) USING BTREE,
   INDEX `product_id`(`product_id` ASC) USING BTREE,
-  CONSTRAINT `t_order_details_ibfk_1` FOREIGN KEY (`order_id`) REFERENCES `t_orders` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
-  CONSTRAINT `t_order_details_ibfk_2` FOREIGN KEY (`product_id`) REFERENCES `t_products` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
+  CONSTRAINT `t_order_details_ibfk_1` FOREIGN KEY (`product_id`) REFERENCES `t_products` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  CONSTRAINT `t_order_details_ibfk_2` FOREIGN KEY (`order_id`) REFERENCES `t_orders` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
@@ -134,8 +134,8 @@ CREATE TABLE `t_pictures`  (
   `product_id` int NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `t_pictures_ibfk_1`(`product_id` ASC) USING BTREE,
-  CONSTRAINT `t_pictures_ibfk_1` FOREIGN KEY (`product_id`) REFERENCES `t_products` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 21 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
+  CONSTRAINT `t_pictures_ibfk_1` FOREIGN KEY (`product_id`) REFERENCES `t_products` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
+) ENGINE = InnoDB AUTO_INCREMENT = 22 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for t_product_attrs
@@ -150,9 +150,9 @@ CREATE TABLE `t_product_attrs`  (
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `attr_id`(`attr_id` ASC) USING BTREE,
   INDEX `t_product_attrs_ibfk_2`(`product_id` ASC) USING BTREE,
-  CONSTRAINT `t_product_attrs_ibfk_1` FOREIGN KEY (`attr_id`) REFERENCES `t_attributes` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
-  CONSTRAINT `t_product_attrs_ibfk_2` FOREIGN KEY (`product_id`) REFERENCES `t_products` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 282 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
+  CONSTRAINT `t_product_attrs_ibfk_1` FOREIGN KEY (`product_id`) REFERENCES `t_products` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  CONSTRAINT `t_product_attrs_ibfk_2` FOREIGN KEY (`attr_id`) REFERENCES `t_attributes` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
+) ENGINE = InnoDB AUTO_INCREMENT = 336 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for t_products
@@ -180,7 +180,7 @@ CREATE TABLE `t_products`  (
   CONSTRAINT `t_products_ibfk_1` FOREIGN KEY (`cid_one`) REFERENCES `t_categories` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
   CONSTRAINT `t_products_ibfk_2` FOREIGN KEY (`cid_three`) REFERENCES `t_categories` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
   CONSTRAINT `t_products_ibfk_3` FOREIGN KEY (`cid_two`) REFERENCES `t_categories` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 26 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 33 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for t_roles
@@ -192,7 +192,7 @@ CREATE TABLE `t_roles`  (
   `desc` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `name`(`name` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 7 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 8 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for t_roles_menus
@@ -226,7 +226,7 @@ CREATE TABLE `t_skus`  (
   UNIQUE INDEX `sku_code`(`sku_code` ASC) USING BTREE,
   INDEX `product_id`(`product_id` ASC) USING BTREE,
   CONSTRAINT `t_skus_ibfk_1` FOREIGN KEY (`product_id`) REFERENCES `t_products` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 8 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 14 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for t_spec_templates
@@ -257,8 +257,8 @@ CREATE TABLE `t_stock_logs`  (
   `create_time` datetime NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `t_stock_logs_ibfk_1`(`sku_id` ASC) USING BTREE,
-  CONSTRAINT `t_stock_logs_ibfk_1` FOREIGN KEY (`sku_id`) REFERENCES `t_skus` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 14 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
+  CONSTRAINT `t_stock_logs_ibfk_1` FOREIGN KEY (`sku_id`) REFERENCES `t_skus` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
+) ENGINE = InnoDB AUTO_INCREMENT = 16 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for t_users
@@ -282,6 +282,6 @@ CREATE TABLE `t_users`  (
   UNIQUE INDEX `phone`(`phone` ASC) USING BTREE,
   INDEX `t_users_ibfk_1`(`role_id` ASC) USING BTREE,
   CONSTRAINT `t_users_ibfk_1` FOREIGN KEY (`role_id`) REFERENCES `t_roles` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 22 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 26 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
 
 SET FOREIGN_KEY_CHECKS = 1;

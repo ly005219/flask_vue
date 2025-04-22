@@ -28,6 +28,13 @@ services:
       - ./flask_shop.sql:/docker-entrypoint-initdb.d/flask_shop.sql
     command: mysqld --character-set-server=utf8 --collation-server=utf8_unicode_ci
 
+  redis:
+    image: redis:3.0.504
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    command: redis-server --port 6379
     
 
 
@@ -42,3 +49,6 @@ services:
 # 如果你希望在后台运行服务，可以使用：
 # 3. 停止服务：   docker-compose down
 # 要停止运行的服务，使用：
+
+volumes:
+  redis_data:
