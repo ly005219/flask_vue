@@ -17,17 +17,20 @@ if (originalResizeObserver) {
   window.ResizeObserver = class ResizeObserver extends originalResizeObserver {
     constructor(callback) {
       const wrappedCallback = (entries, observer) => {
-        try {
-          // 在try-catch中包装调用，以防DOM元素不存在
-          callback(entries, observer);
-        } catch (error) {
-          // 完全屏蔽错误，不输出任何警告
-          // 可以在开发环境下记录到其他地方，但不显示在控制台
-          if (process.env.NODE_ENV === 'development') {
-            // 仅在开发环境下，使用自定义格式记录到控制台
-            console.debug('[已抑制的ResizeObserver错误]', error.message);
+        // 在requestAnimationFrame中运行回调，避免无限循环
+        window.requestAnimationFrame(() => {
+          try {
+            // 在try-catch中包装调用，以防DOM元素不存在
+            callback(entries, observer);
+          } catch (error) {
+            // 完全屏蔽错误，不输出任何警告
+            // 可以在开发环境下记录到其他地方，但不显示在控制台
+            if (process.env.NODE_ENV === 'development') {
+              // 仅在开发环境下，使用自定义格式记录到控制台
+              console.debug('[已抑制的ResizeObserver错误]', error.message);
+            }
           }
-        }
+        });
       };
       super(wrappedCallback);
     }
@@ -38,6 +41,24 @@ if (originalResizeObserver) {
         super.disconnect();
       } catch (error) {
         // 完全静默处理
+      }
+    }
+
+    // 重写observe方法，增加错误处理
+    observe(target) {
+      try {
+        super.observe(target);
+      } catch (error) {
+        // 静默处理observe错误
+      }
+    }
+
+    // 重写unobserve方法，增加错误处理
+    unobserve(target) {
+      try {
+        super.unobserve(target);
+      } catch (error) {
+        // 静默处理unobserve错误
       }
     }
   };
@@ -84,6 +105,29 @@ app.config.globalProperties.$ELEMENT = {
   select: {
     teleported: true, // 确保所有Select组件都弹出到body
     popperAppendToBody: true
+  },
+  // 增加dialog组件的全局配置
+  dialog: {
+    teleported: true, // 确保dialog弹出到body
+    appendToBody: true
+  },
+  // 增加date-picker组件的全局配置  
+  datePicker: {
+    teleported: true,
+    popperAppendToBody: true
+  },
+  // 增加cascader组件的全局配置
+  cascader: {
+    teleported: true,
+    popperAppendToBody: true
+  },
+  // 增加tooltip组件的全局配置
+  tooltip: {
+    teleported: true,
+    popperAppendToBody: true,
+    popperOptions: {
+      strategy: 'fixed'
+    }
   }
 };
 
@@ -148,6 +192,44 @@ window.addEventListener('unhandledrejection', (event) => {
     return false;
   }
 }, true);
+
+// 特别针对webpack-dev-server的overlay错误处理
+if (process.env.NODE_ENV === 'development') {
+  // 覆盖webpack-dev-server的错误处理
+  const originalError = console.error;
+  console.error = function(...args) {
+    // 检查是否是webpack-dev-server的overlay错误
+    if (args.length > 0 && 
+        (typeof args[0] === 'string' && 
+         args[0].includes('ResizeObserver loop'))) {
+      // 忽略这些错误
+      return;
+    }
+    
+    // 其他错误正常处理
+    return originalError.apply(this, args);
+  };
+
+  // 监听DOM变化，移除webpack-dev-server错误overlay
+  const observer = new MutationObserver((mutations) => {
+    for (const mutation of mutations) {
+      if (mutation.addedNodes.length) {
+        for (const node of mutation.addedNodes) {
+          if (node.nodeType === 1 && node.classList && 
+              (node.classList.contains('webpack-dev-server-client-overlay') || 
+               node.classList.contains('error-overlay'))) {
+            if (node.textContent && node.textContent.includes('ResizeObserver')) {
+              node.remove();
+            }
+          }
+        }
+      }
+    }
+  });
+
+  // 开始观察document.body的变化
+  observer.observe(document.body, { childList: true, subtree: true });
+}
 
 // 挂载应用
 app.mount('#app');

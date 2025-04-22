@@ -7,6 +7,7 @@ class Config:
     MYSQL_USER = 'root'
     MYSQL_PASSWORD = 'root'
     MYSQL_DB = 'flask_shop'
+    #MYSQL_DB = 'connect_flask'
     MYSQL_PORT = 3306
     
     MYSQL_CHARSET = 'utf8mb4'

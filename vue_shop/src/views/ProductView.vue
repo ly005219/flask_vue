@@ -37,7 +37,14 @@
                 <el-input-number v-model="product_data.maxPrice" placeholder="最高价格" :min="0" @change="getProductList"></el-input-number>
             </el-col>
             <el-col :span="8">
-                <el-select v-model="product_data.state" placeholder="商品状态" @change="getProductList" teleported popper-append-to-body>
+                <el-select 
+                    v-model="product_data.state" 
+                    placeholder="商品状态" 
+                    @change="getProductList" 
+                    teleported 
+                    popper-append-to-body
+                    :teleported-append-to-body="true"
+                    :popper-options="{ strategy: 'fixed' }">
                     <el-option label="全部" value=""></el-option>
                     <el-option label="上架" :value="1"></el-option>
                     <el-option label="下架" :value="-1"></el-option>
@@ -91,6 +98,8 @@
             width="30%" 
             :close-on-click-modal="false"
             center
+            :teleported="true"
+            :append-to-body="true"
             @closed="handleClose">
             <el-form :model="productEditForm">
                 <el-form-item label="商品名称" prop="name">
@@ -103,7 +112,13 @@
                     <el-input v-model="productEditForm.number" clearable></el-input>
                 </el-form-item>
                 <el-form-item label="商品状态" prop="state">
-                    <el-select v-model="productEditForm.state" placeholder="请选择商品状态" teleported popper-append-to-body>
+                    <el-select 
+                        v-model="productEditForm.state" 
+                        placeholder="请选择商品状态" 
+                        teleported 
+                        popper-append-to-body
+                        :teleported-append-to-body="true"
+                        :popper-options="{ strategy: 'fixed' }">
                         <el-option label="上架" :value="1"></el-option>
                         <el-option label="下架" :value="-1"></el-option>
                         <el-option label="预售" :value="0"></el-option>
@@ -138,7 +153,7 @@
 
 <script setup>
 import { ArrowRight, Search, CirclePlus } from '@element-plus/icons-vue'
-import { ref, reactive, onMounted, nextTick } from 'vue'
+import { ref, reactive, onMounted, nextTick, onBeforeUnmount } from 'vue'
 import api from '@/api/index'
 import { useRouter } from 'vue-router';
 import { ElMessage, ElMessageBox } from 'element-plus'
@@ -178,61 +193,73 @@ const getCategories = async () => {
     }
 }
 
-const getProductList = async () => {
-    loading.value = true
-    try {
-        let params = {}
-        
-        if (product_data.queryName) {
-            params.name = product_data.queryName
-        }
-        
-        if (product_data.sortBy) {
-            const [sortField, order] = product_data.sortBy.split('_')
-            params.sort_by = sortField
-            params.order = order
-        }
-        
-        if (product_data.minPrice !== null) {
-            params.min_price = product_data.minPrice
-        }
-        
-        if (product_data.maxPrice !== null) {
-            params.max_price = product_data.maxPrice
-        }
-        
-        if (product_data.state !== '') {
-            params.state = product_data.state
-        }
-        
-        params.page = product_data.currentPage
-        params.per_page = product_data.pageSize
+// 优化ResizeObserver处理
+let productStateChangeTimeout = null;
 
-        // console.log('发送请求参数:', params)  // 调试日志
-        
-        const res = await api.get_product_list({params})
-        // console.log('接收到响应:', res.data)  // 调试日志
-        
-        if (res.data.status === 200) {
-            product_data.productList = res.data.data.items || []
-            product_data.total = res.data.data.total || 0
-        } else {
-            ElMessage.warning({
-                message: res.data.msg || '获取商品列表失败',
-                type: 'warning'
-            })
-        }
-    } catch (error) {
-        console.error('获取商品列表失败:', error)
-        if (error.response) {
-            console.error('错误响应:', error.response.data)  // 调试日志
-            ElMessage.error(error.response.data.msg || '获取商品列表失败')
-        } else {
-            ElMessage.error('网络错误，请检查您的连接')
-        }
-    } finally {
-        loading.value = false
+// 修改状态更改函数以使用节流
+const getProductList = async () => {
+    // 清除上一个timeout
+    if (productStateChangeTimeout) {
+        clearTimeout(productStateChangeTimeout);
     }
+    
+    // 设置新的timeout，延迟执行请求
+    productStateChangeTimeout = setTimeout(async () => {
+        loading.value = true
+        try {
+            let params = {}
+            
+            if (product_data.queryName) {
+                params.name = product_data.queryName
+            }
+            
+            if (product_data.sortBy) {
+                const [sortField, order] = product_data.sortBy.split('_')
+                params.sort_by = sortField
+                params.order = order
+            }
+            
+            if (product_data.minPrice !== null) {
+                params.min_price = product_data.minPrice
+            }
+            
+            if (product_data.maxPrice !== null) {
+                params.max_price = product_data.maxPrice
+            }
+            
+            if (product_data.state !== '') {
+                params.state = product_data.state
+            }
+            
+            params.page = product_data.currentPage
+            params.per_page = product_data.pageSize
+
+            // console.log('发送请求参数:', params)  // 调试日志
+            
+            const res = await api.get_product_list({params})
+            // console.log('接收到响应:', res.data)  // 调试日志
+            
+            if (res.data.status === 200) {
+                product_data.productList = res.data.data.items || []
+                product_data.total = res.data.data.total || 0
+            } else {
+                ElMessage.warning({
+                    message: res.data.msg || '获取商品列表失败',
+                    type: 'warning'
+                })
+            }
+        } catch (error) {
+            console.error('获取商品列表失败:', error)
+            if (error.response) {
+                console.error('错误响应:', error.response.data)  // 调试日志
+                ElMessage.error(error.response.data.msg || '获取商品列表失败')
+            } else {
+                ElMessage.error('网络错误，请检查您的连接')
+            }
+        } finally {
+            loading.value = false
+        }
+    }, 50); // 短暂延迟，避免频繁触发
 }
 
 const handleSizeChange = (val) => {
@@ -326,19 +353,43 @@ const ProductEdit = (index, row) => {
     ProductEditDialogVisible.value = true
 }
 
+// 防止频繁触发状态变化导致的问题
+let stateChangeTimer = null;
+const handleStateChange = () => {
+    if (stateChangeTimer) {
+        clearTimeout(stateChangeTimer);
+    }
+    
+    stateChangeTimer = setTimeout(() => {
+        getProductList();
+    }, 100);
+};
+
 const ProductEditSubmit = () => {
     if (!productEditForm.name || !productEditForm.price || !productEditForm.number || productEditForm.state === '') {
         ElMessage.warning('请填写完整的商品信息')
         return
     }
 
+    // 状态切换时添加DOM更新完成后的延迟
+    const oldState = product_data.productList.find(p => p.id === productEditID.value)?.state;
+    
     api.update_product(productEditID.value, productEditForm).then(res => {
         if (res.data.status === 200) {
             ElMessage({
                 type: 'success',
                 message: res.data.msg
             })
-            getProductList()
+            
+            // 如果是预售状态变更，添加额外处理
+            if (oldState !== 0 && productEditForm.state === 0 || 
+                oldState === 0 && productEditForm.state !== 0) {
+                // 延迟获取列表，让DOM更新完成
+                setTimeout(() => getProductList(), 100);
+            } else {
+                getProductList();
+            }
+            
             ProductEditDialogVisible.value = false
         } else {
             ElMessage.warning({
@@ -365,6 +416,13 @@ const handleClose = () => {
     productEditForm.number = ''
     productEditForm.state = ''
 }
+
+// 确保组件销毁时清除timeout
+onBeforeUnmount(() => {
+    if (productStateChangeTimeout) {
+        clearTimeout(productStateChangeTimeout);
+    }
+});
 
 </script>
 
@@ -404,5 +462,17 @@ const handleClose = () => {
     .el-input-number {
         width: 100%;
     }
+}
+
+/* 添加预售状态的特殊样式，减少布局变化 */
+.el-tag.el-tag--danger {
+    min-width: 42px;
+    text-align: center;
+}
+
+.el-tag.el-tag--success, 
+.el-tag.el-tag--warning {
+    min-width: 42px;  
+    text-align: center;
 }
 </style>

@@ -6,7 +6,7 @@
         <el-breadcrumb-item>添加商品</el-breadcrumb-item>
     </el-breadcrumb>
 
-    <el-card class="box-card">
+    <el-card class="box-card" v-loading="loading" element-loading-text="数据加载中...">
         <el-alert title="下面输入要《添加商品》的信息" type="warning" center />
         <el-steps :active="active" finish-status="success" align-center>
             <el-step title="基本信息" />
@@ -47,15 +47,17 @@
                     </el-form-item>
                 </el-tab-pane>
                 <el-tab-pane label="商品静态属性" :name="1">
+                    <el-empty v-if="attrData.static.length === 0" description="当前分类没有静态属性" />
                     <el-form-item :label="s.name" v-for="s in attrData.static" :key="s.id">
                         <el-input v-model="s.value" />
                     </el-form-item>
 
                 </el-tab-pane>
                 <el-tab-pane label="商品动态属性" :name="2">
+                    <el-empty v-if="attrData.dynamic.length === 0" description="当前分类没有动态属性" />
                     <el-form-item :label="d.name" v-for="d in attrData.dynamic" :key="d.id">
-                        <el-checkbox-group v-model="d.value">
-                            <el-checkbox :value="v" name="type" v-for="(v,i) in d.value" :key="i" border></el-checkbox>
+                        <el-checkbox-group v-model="d.value" class="dynamic-checkbox-group">
+                            <el-checkbox :label="v" :value="v" name="type" v-for="(v,i) in d.value" :key="i" border class="dynamic-checkbox-item">{{ v }}</el-checkbox>
                         </el-checkbox-group>
                     </el-form-item>
                 </el-tab-pane>
@@ -87,7 +89,7 @@
 
 <script setup>
 import { ArrowRight } from '@element-plus/icons-vue'
-import { ref, reactive, onMounted } from 'vue'
+import { ref, reactive, onMounted, nextTick, onBeforeUnmount } from 'vue'
 import api from '@/api/index'
 import { ElMessage } from 'element-plus';
 import base from '@/api/base'
@@ -95,7 +97,7 @@ import EditorComponent from '@/components/EditorComponent.vue';
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
-
+const loading = ref(false)
 const tabPosition = ref('left')
 
 const active = ref(0)
@@ -190,9 +192,36 @@ const ChangeSelect = (value) => {
 
 }
 
+// 窗口大小变化处理函数
+const handleResize = () => {
+    if (active.value === 2) {
+        // 如果当前在动态属性标签页，强制刷新一次数据
+        if (options.selectID && options.selectID.length === 3) {
+            loading.value = true;
+            nextTick(() => {
+                const tempData = [...attrData.dynamic];
+                attrData.dynamic = [];
+                setTimeout(() => {
+                    attrData.dynamic = tempData;
+                    loading.value = false;
+                }, 50);
+            });
+        }
+    }
+};
+
 onMounted(() => {
-    get_category_list()
-})
+    get_category_list();
+    
+    // 添加窗口大小变化监听器
+    window.addEventListener('resize', handleResize);
+});
+
+// 组件卸载时清理
+onBeforeUnmount(() => {
+    // 移除窗口大小变化监听器
+    window.removeEventListener('resize', handleResize);
+});
 
 //获取商品分类数据
 const get_category_list = () => {
@@ -204,41 +233,85 @@ const get_category_list = () => {
 //未选择级联则无法切换到下一个tab
 const beforeLeave = (activeName, oldActiveName) => {
     //判断是否选择了第三级分类
-    if(options.selectID && options.selectID.length == 3){
-        get_attr(options.selectID[2],'static')
-        get_attr(options.selectID[2], 'dynamic')
-        return true
+    if (options.selectID && options.selectID.length == 3) {
+        // 如果要切换到动态属性标签，预先加载属性数据
+        if (activeName == 2) {
+            loading.value = true;
+            // 先获取静态属性，再获取动态属性
+            get_attr(options.selectID[2], 'static').then(() => {
+                return get_attr(options.selectID[2], 'dynamic');
+            }).then(() => {
+                // 使用nextTick确保DOM更新后才解除loading状态
+                nextTick(() => {
+                    setTimeout(() => {
+                        loading.value = false;
+                    }, 200); // 短暂延迟以确保渲染完成
+                });
+            }).catch(error => {
+                console.error('加载属性失败:', error);
+                loading.value = false;
+            });
+        } else {
+            // 如果不是切换到动态属性标签，则正常加载
+            get_attr(options.selectID[2], 'static');
+            get_attr(options.selectID[2], 'dynamic');
+        }
+        return true;
     }
     ElMessage({
         'type': 'error',
         'message': '请选择商品分类'
-    })
-    return false
-
+    });
+    return false;
 }
 
 //获取属性
 const get_attr = (selectKey, _type) => {
     //console.log('级联变化调用')
-    if (_type === 'static'){
-        api.get_attr_by_category(selectKey,_type).then(res => {
-            attrData.static = res.data.data
-            //console.log(attrData.static)
-           
-        })
-    }else{
-        api.get_attr_by_category(selectKey,_type).then(res => {
-            //打印动态属性列表
-            //console.log('动态属性列表===>',res)
-            //遍历动态属性列表，将value值转换为数组
-            res.data.data.forEach(item => {
-                item.value = item.value ? item.value.split(','):[]//例如：'1,2,3'转换为[1,2,3]
-            })
-
-            attrData.dynamic = res.data.data
-          
-        })
-    }
+    return new Promise((resolve, reject) => {
+        if (_type === 'static'){
+            api.get_attr_by_category(selectKey, _type).then(res => {
+                attrData.static = res.data.data || [];
+                resolve(attrData.static);
+            }).catch(err => {
+                console.error('获取静态属性失败:', err);
+                reject(err);
+            });
+        } else {
+            api.get_attr_by_category(selectKey, _type).then(res => {
+                //打印动态属性列表
+                console.log('动态属性列表原始数据===>',res.data.data);
+                
+                // 优化动态属性数据处理逻辑
+                if (res.data.data && res.data.data.length > 0) {
+                    const processedData = res.data.data.map(item => {
+                        const newItem = {...item};
+                        // 确保value是字符串再进行分割
+                        if (typeof newItem.value === 'string' && newItem.value.trim() !== '') {
+                            newItem.value = newItem.value.split(',').map(v => v.trim());
+                        } else {
+                            newItem.value = [];
+                        }
+                        return newItem;
+                    });
+                    
+                    // 使用nextTick确保DOM更新完成后再进行下一步操作
+                    nextTick(() => {
+                        attrData.dynamic = processedData;
+                        console.log('设置动态属性完成', attrData.dynamic);
+                        resolve(attrData.dynamic);
+                    });
+                } else {
+                    attrData.dynamic = [];
+                    resolve([]);
+                }
+            }).catch(error => {
+                console.error('获取动态属性失败:', error);
+                attrData.dynamic = [];
+                reject(error);
+            });
+        }
+    });
 }
 //上传图片成功的回调函数
 const handleSuccess = (res, file, fileList) => {
@@ -367,10 +440,51 @@ const submitForm = () => {
     flex-wrap: wrap;
 }
 
+/* 动态属性样式优化 */
+.dynamic-checkbox-group {
+    display: flex;
+    flex-wrap: wrap;
+    margin-bottom: 10px;
+    max-width: 100%;
+    min-height: 40px; /* 确保有足够空间显示 */
+}
+
+.dynamic-checkbox-item {
+    margin-right: 10px;
+    margin-bottom: 10px;
+}
+
+/* 确保checkbox样式正确渲染 */
+:deep(.el-checkbox) {
+    margin-right: 15px;
+    display: inline-flex;
+    align-items: center;
+}
+
+:deep(.el-checkbox.is-bordered) {
+    padding: 8px 12px;
+    border-radius: 4px;
+    min-height: 36px;
+}
+
+/* 优化表单项布局 */
+.el-form-item {
+    margin-bottom: 22px;
+    position: relative;
+}
+
 /* 在小屏幕上适应性调整 */
 @media (max-width: 768px) {
     :deep(.tox-toolbar__group) {
         flex-wrap: wrap;
+    }
+    
+    .dynamic-checkbox-group {
+        flex-direction: column;
+    }
+    
+    .dynamic-checkbox-item {
+        margin-bottom: 8px;
     }
 }
 </style>
