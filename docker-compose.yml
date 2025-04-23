@@ -9,6 +9,14 @@ services:
       - "5000:5000"
     environment:
       FLASK_APP: manager.py
+      MYSQL_HOST: db
+    volumes:
+      - ./Flask_Shop:/app
+    depends_on:
+      - db
+    restart: always
+    networks:
+      - app-network
 
   frontend:
     build:
@@ -16,6 +24,10 @@ services:
       dockerfile: Dockerfile.frontend
     ports:
       - "8080:8080" 
+    depends_on:
+      - backend
+    networks:
+      - app-network
 
   db: 
     image: mysql:5.7
@@ -26,15 +38,21 @@ services:
       - "3321:3306"
     volumes:
       - ./flask_shop.sql:/docker-entrypoint-initdb.d/flask_shop.sql
+      - mysql_data:/var/lib/mysql
     command: mysqld --character-set-server=utf8 --collation-server=utf8_unicode_ci
+    restart: always
+    networks:
+      - app-network
 
   redis:
-    image: redis:3.0.504
+    image: redis:6.2.6
     ports:
       - "6379:6379"
     volumes:
       - redis_data:/data
     command: redis-server --port 6379
+    networks:
+      - app-network
     
 
 
@@ -52,3 +70,8 @@ services:
 
 volumes:
   redis_data:
+  mysql_data:
+
+networks:
+  app-network:
+    driver: bridge

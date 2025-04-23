@@ -3,17 +3,23 @@ import os
 
 
 class Config:
-    MYSQL_HOST = 'localhost'
+    
+    
     MYSQL_USER = 'root'
     MYSQL_PASSWORD = 'root'
     MYSQL_DB = 'flask_shop'
+    #更换自己的数据库名称
     #MYSQL_DB = 'connect_flask'
     MYSQL_PORT = 3306
     
     MYSQL_CHARSET = 'utf8mb4'
-
-    SQLALCHEMY_DATABASE_URI =f'mysql+pymysql://{MYSQL_USER}:{MYSQL_PASSWORD}@{MYSQL_HOST}/{MYSQL_DB}'
-
+    # 在Docker环境中，使用服务名作为主机名
+    # MYSQL_HOST = os.environ.get('MYSQL_HOST', 'db')
+    # SQLALCHEMY_DATABASE_URI =f'mysql+pymysql://{MYSQL_USER}:{MYSQL_PASSWORD}@{MYSQL_HOST}:{MYSQL_PORT}/{MYSQL_DB}'
+   
+    #不用docker就用localhost
+    MYSQL_HOST = 'localhost'
+    SQLALCHEMY_DATABASE_URI=f'mysql+pymysql://{MYSQL_USER}:{MYSQL_PASSWORD}@{MYSQL_HOST}/{MYSQL_DB}'
     DEBUG = True
 
     #设置JSON数据不使用ASCII编码

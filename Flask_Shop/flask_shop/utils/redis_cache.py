@@ -5,11 +5,34 @@ from functools import wraps
 from flask import current_app
 import time
 import threading
+import os
 
 # Redis连接单例
 class RedisClient:
     _instance = None
     
+    #用于docker连接的时候开启
+    # @classmethod
+    # def get_instance(cls):
+    #     if cls._instance is None:
+    #         # 从环境变量中获取Redis主机名，默认为服务名称'redis'(Docker环境)
+    #         host = os.environ.get('REDIS_HOST', 'redis')
+    #         port = int(os.environ.get('REDIS_PORT', 6379))
+    #         db = int(os.environ.get('REDIS_DB', 0))
+    #         password = os.environ.get('REDIS_PASSWORD', None)
+            
+    #         print(f"连接到Redis: {host}:{port}")
+            
+    #         cls._instance = redis.Redis(
+    #             host=host,
+    #             port=port,
+    #             db=db,
+    #             password=password,
+    #             decode_responses=False  # 不自动解码，因为我们使用pickle进行序列化
+    #         )
+    #     return cls._instance
+    
+    #不用docker
     @classmethod
     def get_instance(cls):
         if cls._instance is None:

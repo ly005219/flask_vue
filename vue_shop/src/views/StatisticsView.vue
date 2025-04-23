@@ -619,14 +619,18 @@ onMounted(() => {
   renderCharts('category')
 })
 
-// 组件销毁前清理所有图表实例
+// 在组件销毁前清理所有图表
 onBeforeUnmount(() => {
-  // 清理所有图表实例
-  chartIds.forEach(id => {
-    if (proxy.$disposeEcharts) {
-      proxy.$disposeEcharts(id)
-    }
-  })
+  try {
+    // 清理所有图表
+    ['mainChart', 'chart1', 'chart2', 'chart3'].forEach(chartId => {
+      if (proxy.$disposeEcharts) {
+        proxy.$disposeEcharts(chartId)
+      }
+    })
+  } catch (e) {
+    console.debug('清理图表时出错', e)
+  }
 })
 
 // 处理图表类型变化

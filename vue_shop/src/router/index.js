@@ -117,19 +117,15 @@ export default router
 router.beforeEach((to, from, next) => {
   if (to.path === '/login/') {
     next()
-
-  }else{
+  } else {
     //获取token值
     const token = sessionStorage.getItem('token') 
-    if (!token ){
+    if (!token) {
       next('/login/')
+    } else {
+      next()
     }
-    next()
-
-
   }
-
-
 })
 
 
