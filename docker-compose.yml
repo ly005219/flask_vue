@@ -10,8 +10,6 @@ services:
     environment:
       FLASK_APP: manager.py
       MYSQL_HOST: db
-    volumes:
-      - ./Flask_Shop:/app
     depends_on:
       - db
     restart: always

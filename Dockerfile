@@ -13,6 +13,9 @@ COPY Flask_Shop/requirements.txt .
 # 安装依赖
 RUN pip install --no-cache-dir -i https://pypi.tuna.tsinghua.edu.cn/simple -r requirements.txt
 
+# 复制整个Flask_Shop目录到容器内
+COPY Flask_Shop/ .
+
 # 设置环境变量
 ENV FLASK_APP=manager.py
 ENV PYTHONUNBUFFERED=1
